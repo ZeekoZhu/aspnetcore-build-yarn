@@ -14,13 +14,9 @@ RUN curl -SL "$NODE_DOWNLOAD_URL" --output nodejs.tar.gz \
     && echo "$NODE_DOWNLOAD_SHA nodejs.tar.gz" | sha256sum -c - \
     && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
     && rm nodejs.tar.gz \
+    && npm i -g yarn@$YARN_VERSION \
+    && yarn global add webpack@4 webpack-cli@2 \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs
-
-# set up yarn
-RUN curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version $YARN_VERSION \
-    # set up webpack
-    && export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH" \
-    && yarn global add webpack@4 webpack-cli@2
 
 # warmup NuGet package cache
 COPY packagescache.csproj /tmp/warmup/
