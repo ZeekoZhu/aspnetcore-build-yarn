@@ -5,7 +5,7 @@ services:
 
 script:
   - docker build -t zeekozhu/aspnetcore-build-yarn -f 2.0/Dockerfile ./2.0
-  - docker build -t zeekozhu/aspnetcore-build-yarn -f 2.1/sdk/Dockerfile ./sdk/2.1
+  - docker build -t zeekozhu/aspnetcore-build-yarn -f 2.1/sdk/Dockerfile ./2.1/sdk
 
 deploy:
   # 2.0.*
