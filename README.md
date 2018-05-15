@@ -1,5 +1,7 @@
 # aspnetcore-build-yarn
 
+![travis-ci](https://api.travis-ci.org/ZeekoZhu/aspnetcore-build-yarn.svg?branch=master)
+
 *Based on `microsoft/aspnetcore-build:2.0` and `microsoft/dotnet:2.1-sdk`*
 
 `aspnetcore-build` docker image with nodejs, yarn and webpack preinstalled.
