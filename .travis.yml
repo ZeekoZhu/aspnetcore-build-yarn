@@ -1,0 +1,22 @@
+sudo: required
+
+services:
+  - docker
+
+script:
+  - docker build -t zeekozhu/aspnetcore-build-yarn -f 2.0/Dockerfile ./2.0
+  - docker build -t zeekozhu/aspnetcore-build-yarn -f 2.1/sdk/Dockerfile ./sdk/2.1
+
+deploy:
+  # 2.0.*
+  - provider: script
+    script: bash deploy.sh zeekozhu/aspnetcore-build-yarn $TRAVIS_TAG
+    on:
+      tags: true
+      condition: $TRAVIS_TAG =~ ^2\.0\.[0-9.]+(-[a-Z0-9.]+)?$
+  # 2.1.*
+  - provider: script
+    script: bash deploy.sh zeekozhu/aspnetcore-build-yarn $TRAVIS_TAG
+    on:
+      tags: true
+      condition: $TRAVIS_TAG =~ ^2\.1\.[0-9.]+(-[a-Z0-9.]+)?$

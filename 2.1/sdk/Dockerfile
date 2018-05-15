@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.1-sdk-alpine
+FROM microsoft/dotnet:2.1-sdk
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80
@@ -12,7 +12,7 @@ ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION
 
 RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
     && echo "$NODE_DOWNLOAD_SHA  nodejs.tar.gz" | sha256sum -c - \
-    && tar -xzf "nodejs.tar.gz" -C /usr/local/bin --strip-components=1 \
+    && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
     && rm nodejs.tar.gz \
     && npm i -g yarn@$YARN_VERSION \
     && yarn global add webpack@4 webpack-cli@2 \
