@@ -14,7 +14,8 @@ jobs:
     - stage: build 2.1 images
       if: tag =~ ^2\.1\.[0-9.]+(-[a-zA-Z0-9.]+)?$
       script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.1/sdk/Dockerfile ./2.1/sdk
-    - script: docker build -t zeekozhu/aspnetcore-node:tmp -f 2.1/sdk/Dockerfile ./2.1/sdk
+    - script: docker build -t zeekozhu/aspnetcore-node:tmp -f 2.1/runtime/Dockerfile ./2.1/sdk
+      if: tag =~ ^2\.1\.[0-9.]+(-[a-zA-Z0-9.]+)?$
       deploy:
         - provider: script
           script: bash publish.sh zeekozhu/aspnetcore-build-yarn $TRAVIS_TAG
