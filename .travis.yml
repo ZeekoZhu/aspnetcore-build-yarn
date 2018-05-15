@@ -5,21 +5,18 @@ services:
 
 jobs:
   include:
-    - stage: build 2.0 images
-      script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.0/Dockerfile ./2.0
+    - stage: build 2.0 image
       if: tag =~ ^2\.0\.[0-9.]+(-[a-zA-Z0-9.]+)?$
+      script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.0/Dockerfile ./2.0
       deploy:
         - provider: script
           script: bash publish.sh zeekozhu/aspnetcore-build-yarn $TRAVIS_TAG
-          on:
-            tags: true
-            condition: $TRAVIS_TAG =~ ^2\.0\.[0-9.]+(-[a-zA-Z0-9.]+)?$
     - stage: build 2.1 images
-      script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.1/sdk/Dockerfile ./2.1/sdk
       if: tag =~ ^2\.1\.[0-9.]+(-[a-zA-Z0-9.]+)?$
+      script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.1/sdk/Dockerfile ./2.1/sdk
+    - script: docker build -t zeekozhu/aspnetcore-node:tmp -f 2.1/sdk/Dockerfile ./2.1/sdk
       deploy:
         - provider: script
           script: bash publish.sh zeekozhu/aspnetcore-build-yarn $TRAVIS_TAG
-          on:
-            tags: true
-            condition: $TRAVIS_TAG =~ ^2\.1\.[0-9.]+(-[a-zA-Z0-9.]+)?$
+        - provider: script
+          script: bash publish.sh zeekozhu/aspnetcore-node $TRAVIS_TAG
