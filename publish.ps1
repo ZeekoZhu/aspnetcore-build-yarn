@@ -43,7 +43,7 @@ function Push-Image {
 
 }
 
-$tagReg = '(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)-[a-zA-Z0-9-\.]+-(?<hash>.{7})'
+$tagReg = '(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(?<preRelease>-[a-zA-Z0-9.]+)-(?<hash>.{7})'
 
 Write-Output "Git tag is $Tag"
 
@@ -51,10 +51,11 @@ if ($Tag -match $tagReg) {
     $major = $Matches['major']
     $minor = $Matches['minor']
     $patch = $Matches['patch']
+    $preRelease = $Matches['preRelease']
     $hash = $Matches['hash']
     Write-Output "Version is $major.$minor.$patch"
     Write-Output $ENV:DOCKER_PASSWORD | docker login -u $ENV:DOCKER_USERNAME --password-stdin
-    Push-Image -ImageName $ImageName -Version "$major.$minor.$patch" -Suffix $TagSuffix
+    Push-Image -ImageName $ImageName -Version "$major.$minor.$patch$preRelease" -Suffix $TagSuffix
     Push-Image -ImageName $ImageName -Version "$major.$minor" -Suffix $TagSuffix
     if ($IsLatest) {
         Push-Image -ImageName $ImageName -Version 'latest'
