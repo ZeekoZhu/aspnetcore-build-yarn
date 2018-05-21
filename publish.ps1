@@ -23,13 +23,14 @@ if ($Tag -match $tagReg) {
     $minor = $Matches['minor']
     $patch = $Matches['patch']
     $hash = $Matches['hash']
+    Write-Output "Version is $major.$minor.$patch"
     Write-Output $ENV:DOCKER_PASSWORD | docker login -u $ENV:DOCKER_USERNAME --password-stdin
     docker tag "${ImageName}:tmp" "${ImageName}:$major.$minor.$patch"
     docker tag "${ImageName}:tmp" "${ImageName}:$major.$minor"
-    Write-Output "Pushing: ${ImageName}:$manjor.$minor.$patch"
-    docker push "${ImageName}:$manjor.$minor.$patch"
-    Write-Output "Pushing: ${ImageName}:$manjor.$minor"
-    docker push "${ImageName}:$manjor.$minor"
+    Write-Output "Pushing: ${ImageName}:$major.$minor.$patch"
+    docker push "${ImageName}:$major.$minor.$patch"
+    Write-Output "Pushing: ${ImageName}:$major.$minor"
+    docker push "${ImageName}:$major.$minor"
     if ($IsLatest) {
         docker tag "${ImageName}:tmp" "${ImageName}:latest"
         Write-Output "Pushing: ${ImageName}:$manjor.$minor"
