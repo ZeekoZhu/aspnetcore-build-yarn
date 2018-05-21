@@ -3,6 +3,12 @@ sudo: required
 services:
   - docker
 
+before_install:
+  - curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+  - curl -o /etc/apt/sources.list.d/microsoft.list https://packages.microsoft.com/config/ubuntu/16.04/prod.list
+  - apt-get update -q
+  - apt-get install -y powershell
+
 jobs:
   include:
     - stage: build 2.0 image
@@ -10,15 +16,7 @@ jobs:
       script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.0/Dockerfile ./2.0
       deploy:
         - provider: script
-          script: bash publish.sh zeekozhu/aspnetcore-build-yarn $TRAVIS_TAG
-          on:
-           tags: true
-        - provider: script
-          script: bash publish.sh zeekozhu/aspnetcore-build-yarn 2.0
-          on:
-           tags: true
-        - provider: script
-          script: bash publish.sh zeekozhu/aspnetcore-build-yarn latest
+          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn
           on:
            tags: true
     - stage: build 2.1 images
@@ -26,21 +24,20 @@ jobs:
       script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.1/sdk/Dockerfile ./2.1/sdk
       deploy:
         - provider: script
-          script: bash publish.sh zeekozhu/aspnetcore-build-yarn $TRAVIS_TAG
-          on:
-            tags: true
-        - provider: script
-          script: bash publish.sh zeekozhu/aspnetcore-build-yarn 2.1
+          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn
           on:
             tags: true
     - script: docker build -t zeekozhu/aspnetcore-node:tmp -f 2.1/runtime/Dockerfile ./2.1/runtime
       if: tag =~ ^2\.1\.[0-9.]+(-[a-zA-Z0-9.]+)?$
       deploy:
         - provider: script
-          script: bash publish.sh zeekozhu/aspnetcore-node $TRAVIS_TAG
+          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node
           on:
             tags: true
+    - script: docker build -t zeekozhu/aspnetcore-node-deps:tmp -f 2.1/deps/Dockerfile ./2.1/deps
+      if: tag =~ ^2\.1\.[0-9.]+(-[a-zA-Z0-9.]+)?$
+      deploy:
         - provider: script
-          script: bash publish.sh zeekozhu/aspnetcore-node 2.1
+          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node-deps
           on:
             tags: true
