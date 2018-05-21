@@ -11,8 +11,37 @@ param(
     # Latest
     [Parameter(Mandatory = $false)]
     [switch]
-    $IsLatest
+    $IsLatest,
+    # TagSuffix
+    [Parameter(Mandatory = $false)]
+    [string]
+    $TagSuffix
 )
+
+function Push-Image {
+    param(
+        # ImageName
+        [Parameter(Mandatory = $true)]
+        [string]
+        $ImageName,
+        # Version
+        [Parameter(Mandatory = $true)]
+        [string]
+        $Version,
+        # Suffix
+        [Parameter(Mandatory = $false)]
+        [string]
+        $Suffix
+    )
+    if ($Suffix -ne $null) {
+        $Suffix = "-$Suffix"
+    }
+    $tag = "${ImageName}:$Version$Suffix"
+    docker tag "${ImageName}:tmp$Suffix" $tag
+    Write-Output "Pushing: $tag"
+    docker push $tag
+
+}
 
 $tagReg = '(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)-[a-zA-Z0-9-\.]+-(?<hash>.{7})'
 
@@ -25,16 +54,10 @@ if ($Tag -match $tagReg) {
     $hash = $Matches['hash']
     Write-Output "Version is $major.$minor.$patch"
     Write-Output $ENV:DOCKER_PASSWORD | docker login -u $ENV:DOCKER_USERNAME --password-stdin
-    docker tag "${ImageName}:tmp" "${ImageName}:$major.$minor.$patch"
-    docker tag "${ImageName}:tmp" "${ImageName}:$major.$minor"
-    Write-Output "Pushing: ${ImageName}:$major.$minor.$patch"
-    docker push "${ImageName}:$major.$minor.$patch"
-    Write-Output "Pushing: ${ImageName}:$major.$minor"
-    docker push "${ImageName}:$major.$minor"
+    Push-Image -ImageName $ImageName -Version "$major.$minor.$patch" -Suffix $TagSuffix
+    Push-Image -ImageName $ImageName -Version "$major.$minor" -Suffix $TagSuffix
     if ($IsLatest) {
-        docker tag "${ImageName}:tmp" "${ImageName}:latest"
-        Write-Output "Pushing: ${ImageName}:$manjor.$minor"
-        docker push "${ImageName}:latest"
+        Push-Image -ImageName $ImageName -Version 'latest'
     }
 
 }
