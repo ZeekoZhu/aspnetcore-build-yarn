@@ -18,6 +18,9 @@ param(
     $TagSuffix
 )
 
+Write-Output "Push images for ${ImageName}:$Tag-$TagSuffix [$IsLatest]$"
+
+
 function Push-Image {
     param(
         # ImageName
@@ -33,7 +36,8 @@ function Push-Image {
         [string]
         $Suffix
     )
-    if ($Suffix -ne $null) {
+
+    if ($Suffix -ne $null -and $Suffix.Length -gt 0) {
         $Suffix = "-$Suffix"
     }
     $tag = "${ImageName}:$Version$Suffix"
