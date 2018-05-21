@@ -16,7 +16,7 @@ jobs:
       script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.0/Dockerfile ./2.0
       deploy:
         - provider: script
-          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn
+          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn -IsLatest
           on:
            tags: true
     - stage: build 2.1 images
@@ -31,13 +31,13 @@ jobs:
       if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       deploy:
         - provider: script
-          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node
+          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node -IsLatest
           on:
             tags: true
     - script: docker build -t zeekozhu/aspnetcore-node-deps:tmp -f 2.1/deps/Dockerfile ./2.1/deps
       if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       deploy:
         - provider: script
-          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node-deps
+          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node-deps -IsLatest
           on:
             tags: true
