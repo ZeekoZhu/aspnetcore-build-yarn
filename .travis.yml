@@ -12,7 +12,7 @@ before_install:
 jobs:
   include:
     - stage: build 2.0 image
-      if: tag =~ ^2\.0\.[0-9.]+(-[a-zA-Z0-9.]+)?$
+      if: tag =~ ^2\.0\.[0-9.]+([-a-zA-Z0-9.]+)?$
       script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.0/Dockerfile ./2.0
       deploy:
         - provider: script
@@ -20,7 +20,7 @@ jobs:
           on:
            tags: true
     - stage: build 2.1 images
-      if: tag =~ ^2\.1\.[0-9.]+(-[a-zA-Z0-9.]+)?$
+      if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.1/sdk/Dockerfile ./2.1/sdk
       deploy:
         - provider: script
@@ -28,14 +28,14 @@ jobs:
           on:
             tags: true
     - script: docker build -t zeekozhu/aspnetcore-node:tmp -f 2.1/runtime/Dockerfile ./2.1/runtime
-      if: tag =~ ^2\.1\.[0-9.]+(-[a-zA-Z0-9.]+)?$
+      if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       deploy:
         - provider: script
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node
           on:
             tags: true
     - script: docker build -t zeekozhu/aspnetcore-node-deps:tmp -f 2.1/deps/Dockerfile ./2.1/deps
-      if: tag =~ ^2\.1\.[0-9.]+(-[a-zA-Z0-9.]+)?$
+      if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       deploy:
         - provider: script
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node-deps
