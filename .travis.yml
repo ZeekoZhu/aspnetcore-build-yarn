@@ -5,9 +5,9 @@ services:
 
 before_install:
   - curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-  - curl -o /etc/apt/sources.list.d/microsoft.list https://packages.microsoft.com/config/ubuntu/16.04/prod.list
-  - apt-get update -q
-  - apt-get install -y powershell
+  - sudo curl -o /etc/apt/sources.list.d/microsoft.list https://packages.microsoft.com/config/ubuntu/16.04/prod.list
+  - sudo apt-get update -q
+  - sudo apt-get install -y powershell
 
 jobs:
   include:
