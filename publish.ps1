@@ -43,7 +43,7 @@ function Push-Image {
 
 }
 
-$tagReg = '(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(?<preRelease>-[a-zA-Z0-9.]+)-(?<hash>.{7})'
+$tagReg = '(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(?<preRelease>-[a-zA-Z0-9.]+)?-(?<hash>.{7})'
 
 Write-Output "Git tag is $Tag"
 
