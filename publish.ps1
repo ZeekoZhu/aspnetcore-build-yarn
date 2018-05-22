@@ -20,6 +20,52 @@ param(
 
 Write-Output "Push images for ${ImageName}:$Tag-$TagSuffix [$IsLatest]$"
 
+if ($Tag -match $tagReg) {
+    $version = Get-Version $Tag
+    $major = $version.Major
+    $minor = $version.Minor
+    $patch = $version.Patch
+    $preRelease = $version.PreRelease
+    Write-Output "Version is $major.$minor.$patch"
+    Write-Output $ENV:DOCKER_PASSWORD | docker login -u $ENV:DOCKER_USERNAME --password-stdin
+    Push-Image -ImageName $ImageName -Version "$major.$minor.$patch$preRelease" -Suffix $TagSuffix
+    Push-Image -ImageName $ImageName -Version "$major.$minor" -Suffix $TagSuffix
+    if ($IsLatest) {
+        Push-Image -ImageName $ImageName -Version 'latest'
+    }
+
+}
+else {
+    Write-Error "Invalid git tag"
+    exit 1
+}
+
+function Get-Version {
+    param(
+        # Tag
+        [Parameter(Mandatory = $true)]
+        [string]
+        $Tag
+    )
+        
+    $tagReg = '(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(?<preRelease>-[a-zA-Z0-9.]+)?-(?<hash>.{7})'
+    if ($Tag -match $tagReg) {
+        $major = $Matches['major']
+        $minor = $Matches['minor']
+        $patch = $Matches['patch']
+        $preRelease = $Matches['preRelease']
+        $hash = $Matches['hash']
+        return New-Object -TypeName PSObject -Property `
+        @{
+            Major      = $major
+            Minor      = $minor
+            Patch      = $patch
+            PreRelease = $preRelease
+            Hash       = $hash
+        }
+    }
+    return $null
+}
 
 function Push-Image {
     param(
@@ -45,28 +91,4 @@ function Push-Image {
     Write-Output "Pushing: $tag"
     docker push $tag
 
-}
-
-$tagReg = '(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(?<preRelease>-[a-zA-Z0-9.]+)?-(?<hash>.{7})'
-
-Write-Output "Git tag is $Tag"
-
-if ($Tag -match $tagReg) {
-    $major = $Matches['major']
-    $minor = $Matches['minor']
-    $patch = $Matches['patch']
-    $preRelease = $Matches['preRelease']
-    $hash = $Matches['hash']
-    Write-Output "Version is $major.$minor.$patch"
-    Write-Output $ENV:DOCKER_PASSWORD | docker login -u $ENV:DOCKER_USERNAME --password-stdin
-    Push-Image -ImageName $ImageName -Version "$major.$minor.$patch$preRelease" -Suffix $TagSuffix
-    Push-Image -ImageName $ImageName -Version "$major.$minor" -Suffix $TagSuffix
-    if ($IsLatest) {
-        Push-Image -ImageName $ImageName -Version 'latest'
-    }
-
-}
-else {
-    Write-Error "Invalid git tag"
-    exit 1
 }
