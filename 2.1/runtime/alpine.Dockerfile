@@ -1,4 +1,4 @@
-FROM deps
+FROM zeekozhu/aspnetcore-node-deps:2.1.0
 
 # Copy and paste from https://github.com/dotnet/dotnet-docker/blob/master/2.1/aspnetcore-runtime/alpine3.7/amd64/Dockerfile
 
