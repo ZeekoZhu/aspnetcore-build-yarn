@@ -1,6 +1,6 @@
 # Sample contents of Dockerfile
 # Stage 1
-FROM zeekozhu/aspnetcore-build-yarn:2.1 AS builder
+FROM zeekozhu/aspnetcore-build-yarn:2.1-alpine AS builder
 WORKDIR /source
 
 # caches restore result by copying csproj file separately
@@ -15,7 +15,7 @@ COPY . .
 RUN dotnet publish --output /app/ --configuration Release
 
 # Stage 2
-FROM zeekozhu/aspnetcore-node:2.1
+FROM zeekozhu/aspnetcore-node:2.1-alpine
 WORKDIR /app
 COPY --from=builder /app .
 ENTRYPOINT ["dotnet", "myapp.dll"]
