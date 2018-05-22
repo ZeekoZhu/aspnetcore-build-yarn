@@ -4,8 +4,8 @@ FROM microsoft/dotnet:2.1.0-rc1-aspnetcore-runtime
 ENV ASPNETCORE_URLS http://+:80
 
 # set up node
-ENV NODE_VERSION 8.11.1
-ENV YARN_VERSION 1.5.1
+ENV NODE_VERSION 8.11.2
+ENV YARN_VERSION 1.6.0
 ENV NODE_DOWNLOAD_SHA 0e20787e2eda4cc31336d8327556ebc7417e8ee0a6ba0de96a09b0ec2b841f60
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 

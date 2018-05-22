@@ -41,3 +41,17 @@ jobs:
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node-deps -IsLatest
           on:
             tags: true
+    - script: docker build -t zeekozhu/aspnetcore-node:tmp-alpine -f 2.1/runtime/alpine.Dockerfile ./2.1/runtime
+      if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
+      deploy:
+        - provider: script
+          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node -TagSuffix alpine
+          on:
+            tags: true
+    - script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp-alpine -f 2.1/sdk/Dockerfile ./2.1/sdk
+      if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
+      deploy:
+        - provider: script
+          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn -TagSuffix alpine
+          on:
+            tags: true

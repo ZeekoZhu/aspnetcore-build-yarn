@@ -1,5 +1,8 @@
 FROM node:8.11.2-alpine
 
+RUN apk add libgdiplus --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
+        --allow-untrusted
+
 RUN apk add --no-cache \
         ca-certificates \
         \
