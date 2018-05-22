@@ -3,6 +3,7 @@ sudo: required
 services:
   - docker
 
+# install pwsh
 before_install:
   - curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
   - sudo curl -o /etc/apt/sources.list.d/microsoft.list https://packages.microsoft.com/config/ubuntu/14.04/prod.list
@@ -42,7 +43,7 @@ jobs:
           on:
             tags: true
     - stage: build 2.1 alpine image
-    - script: docker build -t zeekozhu/aspnetcore-node:tmp-alpine -f 2.1/runtime/alpine.Dockerfile ./2.1/runtime
+      script: docker build -t zeekozhu/aspnetcore-node:tmp-alpine -f 2.1/runtime/alpine.Dockerfile ./2.1/runtime
       if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       deploy:
         - provider: script
