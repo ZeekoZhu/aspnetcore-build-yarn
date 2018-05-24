@@ -15,7 +15,6 @@ RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
     && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
     && rm nodejs.tar.gz \
     && npm i -g yarn@$YARN_VERSION \
-    && yarn global add webpack@4 webpack-cli@2 \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 # warmup NuGet package cache

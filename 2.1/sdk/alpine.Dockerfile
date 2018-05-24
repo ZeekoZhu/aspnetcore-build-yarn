@@ -3,8 +3,6 @@ FROM zeekozhu/aspnetcore-node-deps:2.1.0
 # set up environment
 ENV ASPNETCORE_PKG_VERSION 2.1.0-rc1-final
 
-RUN yarn global add webpack@4 webpack-cli@2
-
 # Copy and paste from https://github.com/dotnet/dotnet-docker/blob/master/2.1/sdk/alpine3.7/amd64/Dockerfile
 # Disable the invariant mode (set in base image)
 RUN apk add --no-cache icu-libs
