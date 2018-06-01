@@ -2,7 +2,7 @@ FROM microsoft/dotnet:2.1-sdk
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80
-ENV ASPNETCORE_PKG_VERSION 2.1.0-rc1-final
+ENV ASPNETCORE_PKG_VERSION 2.1.0
 
 # set up node
 ENV NODE_VERSION 8.11.2

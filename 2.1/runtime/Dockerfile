@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.1.0-rc1-aspnetcore-runtime
+FROM microsoft/dotnet:2.1.0-aspnetcore-runtime
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80
