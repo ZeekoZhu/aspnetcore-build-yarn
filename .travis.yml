@@ -17,7 +17,7 @@ jobs:
       script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.0/Dockerfile ./2.0
       deploy:
         - provider: script
-          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn -IsLatest
+          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn
           on:
            tags: true
     - stage: build 2.1 images
@@ -28,7 +28,7 @@ jobs:
         - pwsh Test.ps1 zeekozhu/aspnetcore-build-yarn:tmp -Dotnet 2.1.0-rc1 -Node 8.11.2 -Yarn 1.6.0
       deploy:
         - provider: script
-          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn
+          script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn -IsLatest
           on:
             tags: true
       # zeekozhu/aspnetcore-build-yarn:chromium
