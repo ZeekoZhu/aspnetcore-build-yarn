@@ -19,7 +19,8 @@ RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
 
 # install bzip2
 RUN curl -O "http://ftp.us.debian.org/debian/pool/main/b/bzip2/bzip2_1.0.6-8.1_amd64.deb" \
-    && dpkg -i bzip2_1.0.6-8.1_amd64.deb
+    && dpkg -i bzip2_1.0.6-8.1_amd64.deb \
+    && rm bzip2_1.0.6-8.1_amd64.deb
 
 # warmup NuGet package cache
 COPY packagescache.csproj /tmp/warmup/
