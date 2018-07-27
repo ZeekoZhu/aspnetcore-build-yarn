@@ -1,8 +1,15 @@
 FROM microsoft/dotnet:2.1-sdk
 
 # set up environment
-ENV ASPNETCORE_URLS http://+:80
-ENV ASPNETCORE_PKG_VERSION 2.1.1
+ENV ASPNETCORE_URLS http://+:80 \
+    # warmup project
+    ASPNETCORE_PKG_VERSION 2.1.2 \
+    # Enable detection of running in a container
+    DOTNET_RUNNING_IN_CONTAINER=true \
+    # Enable correct mode for dotnet watch (only mode supported in a container)
+    DOTNET_USE_POLLING_FILE_WATCHER=true \
+    # Skip extraction of XML docs - generally not useful within an image/container - helps perfomance
+    NUGET_XMLDOC_MODE=skip
 
 # set up node
 ENV NODE_VERSION 8.11.3

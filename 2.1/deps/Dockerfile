@@ -23,4 +23,4 @@ ENV ASPNETCORE_URLS=http://+:80 \
     # Enable detection of running in a container
     DOTNET_RUNNING_IN_CONTAINER=true \
     # Set the invariant mode since icu_libs isn't included (see https://github.com/dotnet/announcements/issues/20)
-DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
+    DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true

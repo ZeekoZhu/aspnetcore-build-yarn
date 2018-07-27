@@ -1,7 +1,7 @@
-FROM zeekozhu/aspnetcore-node-deps:2.1.1
+FROM zeekozhu/aspnetcore-node-deps:2.1.2
 
 # set up environment
-ENV ASPNETCORE_PKG_VERSION 2.1.1
+ENV ASPNETCORE_PKG_VERSION 2.1.2
 
 # Copy and paste from https://github.com/dotnet/dotnet-docker/blob/master/2.1/sdk/alpine3.7/amd64/Dockerfile
 # Disable the invariant mode (set in base image)
@@ -12,7 +12,7 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LANG=en_US.UTF-8
 
 # Install .NET Core SDK
-ENV DOTNET_SDK_VERSION 2.1.301
+ENV DOTNET_SDK_VERSION 2.1.302
 
 RUN apk add --no-cache --virtual .build-deps \
         openssl \
