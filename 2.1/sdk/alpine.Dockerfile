@@ -33,11 +33,4 @@ ENV DOTNET_USE_POLLING_FILE_WATCHER=true \
 # Trigger first run experience by running arbitrary cmd to populate local package cache
 RUN dotnet help
 
-# warmup NuGet package cache
-COPY packagescache.csproj /tmp/warmup/
-RUN dotnet restore /tmp/warmup/packagescache.csproj \
-      --source https://api.nuget.org/v3/index.json \
-      --verbosity quiet \
-    && rm -rf /tmp/warmup/
-
 WORKDIR /

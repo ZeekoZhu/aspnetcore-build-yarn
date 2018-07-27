@@ -2,8 +2,6 @@ FROM microsoft/dotnet:2.1-sdk
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80 \
-    # warmup project
-    ASPNETCORE_PKG_VERSION 2.1.2 \
     # Enable detection of running in a container
     DOTNET_RUNNING_IN_CONTAINER=true \
     # Enable correct mode for dotnet watch (only mode supported in a container)
@@ -29,11 +27,7 @@ RUN apt-get -qq update \
     && apt-get install -y chromium --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# warmup NuGet package cache
-COPY packagescache.csproj /tmp/warmup/
-RUN dotnet restore /tmp/warmup/packagescache.csproj \
-      --source https://api.nuget.org/v3/index.json \
-      --verbosity quiet \
-    && rm -rf /tmp/warmup/
+# Trigger first run experience by running arbitrary cmd to populate local package cache
+RUN dotnet help
 
 WORKDIR /
