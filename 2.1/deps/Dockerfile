@@ -4,7 +4,7 @@ RUN apk add libgdiplus --no-cache --repository http://dl-3.alpinelinux.org/alpin
         --allow-untrusted
 
 RUN apk add --no-cache \
-        ca-certificates openssl \
+        ca-certificates \
         \
         # .NET Core dependencies
         krb5-libs \
@@ -15,7 +15,6 @@ RUN apk add --no-cache \
         tzdata \
         userspace-rcu \
         zlib \
-    && update-ca-certificates \
     && apk -X https://dl-cdn.alpinelinux.org/alpine/edge/main add --no-cache \
         lttng-ust
 
