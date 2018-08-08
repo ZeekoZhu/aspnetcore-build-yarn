@@ -7,6 +7,7 @@ RUN apk add --no-cache \
         ca-certificates curl \
         # .NET Core dependencies
         krb5-libs \
+        icu-libs \
         libgcc \
         libintl \
         libssl1.0 \
