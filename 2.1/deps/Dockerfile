@@ -19,7 +19,7 @@ RUN apk add --no-cache \
         zlib \
         && apk -X https://dl-cdn.alpinelinux.org/alpine/edge/main add --no-cache \
         lttng-ust \
-        && npm i -g yarn@YARN_VERSION
+        && npm i -g yarn@$YARN_VERSION
 
 # Configure Kestrel web server to bind to port 80 when present
 ENV ASPNETCORE_URLS=http://+:80 \
