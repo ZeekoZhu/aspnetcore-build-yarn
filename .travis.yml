@@ -25,7 +25,7 @@ jobs:
       # zeekozhu/aspnetcore-build-yarn
       script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.1/sdk/Dockerfile ./2.1/sdk
       before_deploy:
-        - pwsh Test.ps1 zeekozhu/aspnetcore-build-yarn:tmp -Dotnet 2.1.400 -Node 8.11.4 -Yarn 1.9.2 -Sdk
+        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-build-yarn
       deploy:
         - provider: script
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn -IsLatest
