@@ -25,9 +25,9 @@ Official `dotnet:2.1-aspnetcore-runtime` docker image with nodejs preinstalled.
 ## Different from original 2.0.x image
 
 - remove `gulp` and `bower`
-- add `yarn@1.7.0`
+- add `yarn@1.9.2`
 
 ## Different from original 2.1.x image
 
-- add `nodejs@8.11.3`
-- add `yarn@1.7.0`
+- add `nodejs@8.11.4`
+- add `yarn@1.9.2`

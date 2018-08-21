@@ -1,4 +1,6 @@
-FROM node:8.11.3-alpine
+FROM node:8.11.4-alpine
+
+ENV YARN_VERSION 1.9.2
 
 RUN apk add libgdiplus --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
         --allow-untrusted
@@ -16,7 +18,8 @@ RUN apk add --no-cache \
         userspace-rcu \
         zlib \
         && apk -X https://dl-cdn.alpinelinux.org/alpine/edge/main add --no-cache \
-        lttng-ust
+        lttng-ust \
+        && npm i -g yarn@YARN_VERSION
 
 # Configure Kestrel web server to bind to port 80 when present
 ENV ASPNETCORE_URLS=http://+:80 \
