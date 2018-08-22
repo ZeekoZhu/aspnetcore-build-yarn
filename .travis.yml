@@ -35,7 +35,7 @@ jobs:
     - script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp-chromium -f 2.1/sdk/chromium.Dockerfile ./2.1/sdk
       if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       before_deploy:
-        - pwsh Test.ps1 zeekozhu/aspnetcore-build-yarn:tmp-chromium -Dotnet 2.1.400 -Node 8.11.4 -Yarn 1.9.2 -Sdk
+        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-build-yarn:tmp-chromium
       deploy:
         - provider: script
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn -TagSuffix chromium
@@ -45,7 +45,7 @@ jobs:
     - script: docker build -t zeekozhu/aspnetcore-node:tmp -f 2.1/runtime/Dockerfile ./2.1/runtime
       if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       before_deploy:
-        - pwsh Test.ps1 zeekozhu/aspnetcore-node:tmp -Dotnet 2.1.400 -Node 8.11.4 -Yarn 1.9.2
+        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-node:tmp
       deploy:
         - provider: script
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node -IsLatest
@@ -64,7 +64,7 @@ jobs:
       script: docker build -t zeekozhu/aspnetcore-node:tmp-alpine -f 2.1/runtime/alpine.Dockerfile ./2.1/runtime
       if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       before_deploy:
-        - pwsh Test.ps1 zeekozhu/aspnetcore-node:tmp-alpine -Dotnet 2.1.2 -Node 8.11.4 -Yarn 1.9.2
+        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-node:tmp-alpine
       deploy:
         - provider: script
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node -TagSuffix alpine
@@ -74,7 +74,7 @@ jobs:
     - script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp-alpine -f 2.1/sdk/alpine.Dockerfile ./2.1/sdk
       if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       before_deploy:
-        - pwsh Test.ps1 zeekozhu/aspnetcore-build-yarn:tmp-alpine -Dotnet 2.1.400 -Node 8.11.4 -Yarn 1.9.2 -Sdk
+        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-build-yarn:tmp-alpine
       deploy:
         - provider: script
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn -TagSuffix alpine
