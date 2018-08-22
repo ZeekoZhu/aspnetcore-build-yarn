@@ -16,4 +16,5 @@ $spec = $specConfig."$Job"
 
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Test Faild"
+    exit 1
 }
