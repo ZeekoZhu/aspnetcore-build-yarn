@@ -35,7 +35,7 @@ jobs:
     - script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp-chromium -f 2.1/sdk/chromium.Dockerfile ./2.1/sdk
       if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       before_deploy:
-        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-build-yarn:tmp-chromium
+        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-build-yarn:chromium
       deploy:
         - provider: script
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn -TagSuffix chromium
@@ -45,7 +45,7 @@ jobs:
     - script: docker build -t zeekozhu/aspnetcore-node:tmp -f 2.1/runtime/Dockerfile ./2.1/runtime
       if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       before_deploy:
-        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-node:tmp
+        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-node
       deploy:
         - provider: script
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node -IsLatest
@@ -64,7 +64,7 @@ jobs:
       script: docker build -t zeekozhu/aspnetcore-node:tmp-alpine -f 2.1/runtime/alpine.Dockerfile ./2.1/runtime
       if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       before_deploy:
-        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-node:tmp-alpine
+        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-node:alpine
       deploy:
         - provider: script
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-node -TagSuffix alpine
@@ -74,7 +74,7 @@ jobs:
     - script: docker build -t zeekozhu/aspnetcore-build-yarn:tmp-alpine -f 2.1/sdk/alpine.Dockerfile ./2.1/sdk
       if: tag =~ ^2\.1\.[0-9.]+([-a-zA-Z0-9.]+)?$
       before_deploy:
-        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-build-yarn:tmp-alpine
+        - pwsh TestRunner.ps1 zeekozhu/aspnetcore-build-yarn:alpine
       deploy:
         - provider: script
           script: pwsh publish.ps1 $TRAVIS_TAG zeekozhu/aspnetcore-build-yarn -TagSuffix alpine
