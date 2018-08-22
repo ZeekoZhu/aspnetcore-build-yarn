@@ -15,5 +15,3 @@ RUN apk add --no-cache --virtual .build-deps \
     && rm aspnetcore.tar.gz \
     && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
     && apk del .build-deps
-
-RUN npm i -g yarn@$YARN_VERSION
