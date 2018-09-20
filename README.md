@@ -11,7 +11,7 @@
 Official `aspnetcore-build` docker image with nodejs and yarn preinstalled.
 
 - `2.0.8`,`2.0` [2.0/Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.0/Dockerfile)
-- `2.1.4,`2.1`,`latest` [2.1/sdk/Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.1/sdk/Dockerfile)
+- `2.1.4`, `2.1`, `latest` [2.1/sdk/Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.1/sdk/Dockerfile)
 - `2.1.4-alpine`,`2.1-alpine` [2.1/sdk/alpine.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.1/sdk/alpine.Dockerfile)
 - `2.1.4-chromium`,`2.1-chromium` [2.1/sdk/chromium.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.1/sdk/alpine.Dockerfile)
 
