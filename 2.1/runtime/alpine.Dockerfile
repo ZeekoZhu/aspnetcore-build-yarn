@@ -8,7 +8,7 @@ ENV ASPNETCORE_VERSION 2.1.4
 RUN apk add --no-cache --virtual .build-deps \
     openssl \
     && curl --output aspnetcore.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/$ASPNETCORE_VERSION/aspnetcore-runtime-$ASPNETCORE_VERSION-linux-musl-x64.tar.gz \
-    && aspnetcore_sha512='88309e5ddc1527f8ad19418bc1a628ed36fa5b21318a51252590ffa861e97bd4f628731bdde6cd481a1519d508c94960310e403b6cdc0e94c1781b405952ea3a' \
+    && aspnetcore_sha512='173168730d6fe23a7c5457ed5533e4dc103a2f95ae5c0118a3ac4fd06ad23a1bd5a605bd43b10148cf8bcfc3a5b4c32d78b8d745dd5ba57921449a236f2c8ad8' \
     && echo "$aspnetcore_sha512  aspnetcore.tar.gz" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet \
     && tar -zxf aspnetcore.tar.gz -C /usr/share/dotnet \
