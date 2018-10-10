@@ -1,14 +1,14 @@
-FROM zeekozhu/aspnetcore-node-deps:2.1.4
+FROM zeekozhu/aspnetcore-node-deps:2.1.5
 
 # Copy and paste from https://github.com/dotnet/dotnet-docker/blob/master/2.1/aspnetcore-runtime/alpine3.7/amd64/Dockerfile
 
 # Install ASP.NET Core
-ENV ASPNETCORE_VERSION 2.1.4
+ENV ASPNETCORE_VERSION 2.1.5
 
 RUN apk add --no-cache --virtual .build-deps \
     openssl \
     && curl --output aspnetcore.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/$ASPNETCORE_VERSION/aspnetcore-runtime-$ASPNETCORE_VERSION-linux-musl-x64.tar.gz \
-    && aspnetcore_sha512='173168730d6fe23a7c5457ed5533e4dc103a2f95ae5c0118a3ac4fd06ad23a1bd5a605bd43b10148cf8bcfc3a5b4c32d78b8d745dd5ba57921449a236f2c8ad8' \
+    && aspnetcore_sha512='5d87fb86e4e70bf0769d081a0b0c4388348bcefe61559242af17a9604bbdb3269e4ab47c420105ab6a2236431978adede9406d3ff0845602a398bb81f4ecf6f7' \
     && echo "$aspnetcore_sha512  aspnetcore.tar.gz" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet \
     && tar -zxf aspnetcore.tar.gz -C /usr/share/dotnet \
