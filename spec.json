@@ -1,37 +1,37 @@
 {
     "zeekozhu/aspnetcore-build-yarn": {
         "testImage": "zeekozhu/aspnetcore-build-yarn:tmp",
-        "dotnet": "2.1.403",
-        "node": "8.12.0",
-        "yarn": "1.9.4",
+        "dotnet": "2.1.500",
+        "node": "10.13.0",
+        "yarn": "10.12.3",
         "sdk": true
     },
     "zeekozhu/aspnetcore-build-yarn:chromium": {
         "testImage": "zeekozhu/aspnetcore-build-yarn:tmp-chromium",
-        "dotnet": "2.1.403",
-        "node": "8.12.0",
-        "yarn": "1.9.4",
+        "dotnet": "2.1.500",
+        "node": "10.13.0",
+        "yarn": "10.12.3",
         "sdk": true
     },
     "zeekozhu/aspnetcore-node": {
         "testImage": "zeekozhu/aspnetcore-node:tmp",
-        "dotnet": "2.1.5",
-        "node": "8.12.0",
-        "yarn": "1.9.4",
+        "dotnet": "2.1.6",
+        "node": "10.13.0",
+        "yarn": "10.12.3",
         "sdk": false
     },
     "zeekozhu/aspnetcore-node:alpine": {
         "testImage": "zeekozhu/aspnetcore-node:tmp-alpine",
-        "dotnet": "2.1.5",
-        "node": "8.12.0",
-        "yarn": "1.9.4",
+        "dotnet": "2.1.6",
+        "node": "10.13.0",
+        "yarn": "10.12.3",
         "sdk": false
     },
     "zeekozhu/aspnetcore-build-yarn:alpine": {
         "testImage": "zeekozhu/aspnetcore-build-yarn:tmp-alpine",
-        "dotnet": "2.1.403",
-        "node": "8.12.0",
-        "yarn": "1.9.4",
+        "dotnet": "2.1.500",
+        "node": "10.13.0",
+        "yarn": "10.12.3",
         "sdk": true
     }
 }

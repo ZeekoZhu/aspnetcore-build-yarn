@@ -1,8 +1,8 @@
-FROM node:8.12.0-alpine
+FROM node:10.13.0-alpine
 
-ENV YARN_VERSION 1.9.4
+ENV YARN_VERSION 1.12.3
 
-RUN apk add libgdiplus --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
+RUN apk add libgdiplus-dev --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
         --allow-untrusted
 
 RUN apk add --no-cache \
