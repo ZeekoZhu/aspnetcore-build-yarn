@@ -10,6 +10,7 @@ RUN apk add --no-cache \
         # .NET Core dependencies
         krb5-libs \
         libgcc \
+        icu-libs \
         libintl \
         libssl1.0 \
         libstdc++ \
