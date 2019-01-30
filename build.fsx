@@ -49,7 +49,7 @@ module Cli =
     let validateVersion (options: TriggerCIOptions) =
         let newTag =
             if options.IsProd then options.Version
-            else options.Version + "." + Git.Information.getCurrentHash ()
+            else options.Version + "-" + Git.Information.getCurrentHash ()
             |> SemVer.parse
         let latestTag = getLatestTag () |> SemVer.parse
         Trace.tracefn "Latest version: %s" latestTag.AsString
@@ -83,7 +83,7 @@ module Cli =
 let triggerCi (p: TargetParameter) =
     Cli.triggerCiCli p.Context.Arguments
 
-Target.create "TriggerCi" triggerCi
+Target.create "TriggerCI" triggerCi
 
 Target.create "All" ignore
 
