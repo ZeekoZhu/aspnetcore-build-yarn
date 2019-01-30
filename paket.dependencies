@@ -1,0 +1,11 @@
+version 5.193.0
+// [ FAKE GROUP ]
+group Build
+    storage none
+    source https://api.nuget.org/v3/index.json
+nuget CommandLineParser.FSharp
+    nuget Fake.DotNet.Cli
+    nuget Fake.IO.FileSystem
+    nuget Fake.Core.Target
+nuget Fake.Tools.Git
+    nuget FSharp.Core 4.5.0
