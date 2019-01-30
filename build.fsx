@@ -42,7 +42,7 @@ module Cli =
         }
 
     let ensureWorkspaceClean () =
-        let isEmpty = Git.FileStatus.getAllFiles "./" |> Seq.isEmpty
+        let isEmpty = Git.Information.isCleanWorkingCopy "./"
         if not isEmpty then failwith "Workspace is not clean"
         isEmpty
 
