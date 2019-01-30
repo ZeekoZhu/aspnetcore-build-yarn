@@ -60,11 +60,15 @@ module Cli =
     let tagCurrent (tag) =
         Git.Branches.tag "./" tag
 
+    let pushCommits () =
+        Trace.trace (runGitCmd "push --all")
+
     let triggerCi (options: TriggerCIOptions) =
         Trace.logfn "%A" options
         ensureWorkspaceClean () |> ignore
         let version = validateVersion options
         tagCurrent version.AsString
+        pushCommits ()
         ()
 
     let triggerCiCli (args: seq<string>) =
