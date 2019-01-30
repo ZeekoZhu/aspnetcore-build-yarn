@@ -61,7 +61,9 @@ module Cli =
         Git.Branches.tag "./" tag
 
     let pushCommits () =
-        Trace.trace (runGitCmd "push --all")
+        let runCmd = Git.CommandHelper.runSimpleGitCommand "./"
+        runCmd "push --all" |> ignore
+        runCmd "push --tags" |> ignore
 
     let triggerCi (options: TriggerCIOptions) =
         Trace.logfn "%A" options
