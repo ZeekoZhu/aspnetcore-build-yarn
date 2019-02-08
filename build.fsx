@@ -3,6 +3,7 @@
   #r "Facades/netstandard"
 #endif
 open System
+open System.IO
 open System.Text.RegularExpressions
 open Fake.Core
 open Fake.DotNet
@@ -194,9 +195,8 @@ module Docker =
             |> Proc.start
         use inputWriter = new StreamWriter(input.Value)
         inputWriter.WriteLine dockerPwd
-        Async.AwaitTask proc
-        |> Async.RunSynchronously
-        |> ignore
+        inputWriter.Close()
+        proc.Wait()
 
     let publishImage () =
         let spec = FakeVar.getOrFail<ImageSpecItem> BuildParams
