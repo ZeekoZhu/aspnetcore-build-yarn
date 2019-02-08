@@ -193,7 +193,7 @@ module Docker =
             |> showOutput
             |> Proc.start
         use inputWriter = new StreamWriter(input.Value)
-        inputWriter.Write dockerPwd
+        inputWriter.WriteLine dockerPwd
         Async.AwaitTask proc
         |> Async.RunSynchronously
         |> ignore
