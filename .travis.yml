@@ -12,20 +12,20 @@ jobs:
     - stage: build images
       if: tag =~ ^2\.2\.[0-9.]+([-a-zA-Z0-9.]+)?$
       # zeekozhu/aspnetcore-build-yarn
-      script: ./fake.sh build -t CI -t zeekozhu/aspnetcore-build-yarn:tmp -f 2.2/sdk/Dockerfile -c ./2.2/sdk
+      script: ./fake.sh build -t CI -t zeekozhu/aspnetcore-build-yarn -f 2.2/sdk/Dockerfile -c ./2.2/sdk
       # zeekozhu/aspnetcore-build-yarn:chromium
-    - script: ./fake.sh build -t CI -t zeekozhu/aspnetcore-build-yarn:tmp-chromium -f 2.2/sdk/chromium.Dockerfile ./2.2/sdk
+    - script: ./fake.sh build -t CI -t zeekozhu/aspnetcore-build-yarn -f 2.2/sdk/chromium.Dockerfile ./2.2/sdk
       if: tag =~ ^2\.2\.[0-9.]+([-a-zA-Z0-9.]+)?$
       # zeekozhu/aspnetcore-node
-    - script: ./fake.sh build -t CI -t zeekozhu/aspnetcore-node:tmp -f 2.2/runtime/Dockerfile -c ./2.2/runtime
+    - script: ./fake.sh build -t CI -t zeekozhu/aspnetcore-node -f 2.2/runtime/Dockerfile -c ./2.2/runtime
       if: tag =~ ^2\.2\.[0-9.]+([-a-zA-Z0-9.]+)?$
       # zeekozhu/aspnetcore-node-deps used by other alpine based images
-    - script: ./fake.sh build -t CI -t zeekozhu/aspnetcore-node-deps:tmp -f 2.2/deps/Dockerfile -c ./2.2/deps
+    - script: ./fake.sh build -t CI -t zeekozhu/aspnetcore-node-deps -f 2.2/deps/Dockerfile -c ./2.2/deps
       if: tag =~ ^2\.2\.[0-9.]+([-a-zA-Z0-9.]+)?$
     - stage: build 2.2 alpine image
       # zeekozhu/aspnetcore-node:alpine
-      script: ./fake.sh build -t CI zeekozhu/aspnetcore-node:tmp-alpine -f 2.2/runtime/alpine.Dockerfile -c ./2.2/runtime
+      script: ./fake.sh build -t CI zeekozhu/aspnetcore-node -f 2.2/runtime/alpine.Dockerfile -c ./2.2/runtime
       if: tag =~ ^2\.2\.[0-9.]+([-a-zA-Z0-9.]+)?$
       # zeekozhu/aspnetcore-build-yarn:alpine
-    - script: ./fake.sh build -t CI zeekozhu/aspnetcore-build-yarn:tmp-alpine -f 2.2/sdk/alpine.Dockerfile -c ./2.2/sdk
+    - script: ./fake.sh build -t CI zeekozhu/aspnetcore-build-yarn -f 2.2/sdk/alpine.Dockerfile -c ./2.2/sdk
       if: tag =~ ^2\.2\.[0-9.]+([-a-zA-Z0-9.]+)?$
