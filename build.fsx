@@ -185,14 +185,17 @@ module Docker =
         let dockerPwd = Environment.environVar "DOCKER_PASSWORD"
         let dockerUsr = Environment.environVar "DOCKER_USERNAME"
         let input = StreamRef.Empty
+        
+        let proc =
+            CreateProcess.fromRawCommand
+                "docker" [ "login"; "-u"; dockerUsr; "--password-stdin" ]
+            |> CreateProcess.withStandardInput (CreatePipe input)
+            |> showOutput
+            |> Proc.start
         use inputWriter = new StreamWriter(input.Value)
         inputWriter.Write dockerPwd
-        
-        CreateProcess.fromRawCommand
-            "docker" [ "login"; "-u"; dockerUsr; "--password-stdin" ]
-        |> CreateProcess.withStandardInput (CreatePipe input)
-        |> showOutput
-        |> Proc.run
+        Async.AwaitTask proc
+        |> Async.RunSynchronously
         |> ignore
 
     let publishImage () =
