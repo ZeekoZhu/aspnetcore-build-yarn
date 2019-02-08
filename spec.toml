@@ -8,7 +8,7 @@ Yarn = "1.12.3"
 Sdk = true
 Suffix = ""
 Latest = true
-SkipTest = true
+SkipTest = false
 
 [[Images]]
 Name = "zeekozhu/aspnetcore-build-yarn:chromium"
@@ -20,7 +20,7 @@ Yarn = "1.12.3"
 Sdk = true
 Suffix = "chromium"
 Latest = false
-SkipTest = true
+SkipTest = false
 
 [[Images]]
 Name = "zeekozhu/aspnetcore-node"
@@ -32,7 +32,7 @@ Yarn = "1.12.3"
 Sdk = false
 Suffix = ""
 Latest = true
-SkipTest = true
+SkipTest = false
 
 [[Images]]
 Name = "zeekozhu/aspnetcore-node:alpine"
@@ -44,7 +44,7 @@ Yarn = "1.12.3"
 Sdk = false
 Suffix = "alpine"
 Latest = false
-SkipTest = true
+SkipTest = false
 
 [[Images]]
 Name = "zeekozhu/aspnetcore-build-yarn:alpine"
@@ -56,7 +56,7 @@ Yarn = "1.12.3"
 Sdk = true
 Suffix = "alpine"
 Latest = false
-SkipTest = true
+SkipTest = false
 
 [[Images]]
 Name = "zeekozhu/aspnetcore-node-deps"

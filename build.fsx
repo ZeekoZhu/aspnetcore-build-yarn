@@ -217,9 +217,9 @@ module Docker =
              else tag + "-" + spec.Suffix
            )
         |> Seq.iter (fun t ->
-            Trace.tracefn "%s" t
-            //dockerCmd "tag" [ spec.TestImage; t ]
-            //dockerCmd "push" [ t ]
+            Trace.tracefn "Pushing %s" t
+            dockerCmd "tag" [ spec.TestImage; t ]
+            dockerCmd "push" [ t ]
            )
 
 // ----------------------
