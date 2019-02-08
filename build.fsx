@@ -157,8 +157,10 @@ module Docker =
 
             let checkVersion item itemValue actualValue =
                 Trace.tracefn "Q: Is %s's version %s?" item itemValue
-                if itemValue = actualValue
-                then Trace.traceErrorfn "A: No, %s's version is %s!" item actualValue
+                if itemValue <> actualValue
+                then
+                    Trace.traceErrorfn "A: No, %s's version is %s!" item actualValue
+                    failwithf "Test %s failed" item
                 else Trace.tracefn "A: Yes!"
 
             let dotnetVersion =
