@@ -155,9 +155,9 @@ module Docker =
             let dockerRunRm args =
                 runCmdAndReturn "docker" (["run"; "--rm"; imageSpec.TestImage; ] @ args)
 
-            let checkVersion item itemValue actualValue =
-                Trace.tracefn "Q: Is %s's version %s?" item itemValue
-                if itemValue <> actualValue
+            let checkVersion item itemValue (actualValue: string) =
+                Trace.tracefn "Q: Is %s's version %s ?" item itemValue
+                if itemValue.Trim() <> actualValue.Trim()
                 then
                     Trace.traceErrorfn "A: No, %s's version is %s!" item actualValue
                     failwithf "Test %s failed" item
