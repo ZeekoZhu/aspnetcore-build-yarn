@@ -15,6 +15,7 @@ open Fake.Tools
 open CommandLine
 open CommandLine.Text
 open Nett
+open Fake.MyFakeTools
 
 // ----------------------
 // Var
@@ -71,48 +72,6 @@ let handleCli<'t> (args: seq<string>) (fn: 't -> unit) =
 // ----------------------
 // Command Line Interface
 // ----------------------
-
-module TriggerCI =
-    type TriggerCIOptions =
-        { [<Option('v', "version", Required = true)>] Version: string
-          [<Option('l', "latest", Default = false)>] IsProd: bool
-        }
-
-    let ensureWorkspaceClean () =
-        let isEmpty = Git.Information.isCleanWorkingCopy "./"
-        if not isEmpty then failwith "Workspace is not clean"
-        isEmpty
-
-    let validateVersion (options: TriggerCIOptions) =
-        let newTag =
-            if options.IsProd then options.Version
-            else options.Version + "-" + Git.Information.getCurrentHash ()
-            |> SemVer.parse
-        let latestTag = getLatestTag () |> SemVer.parse
-        Trace.tracefn "Latest version: %s" latestTag.AsString
-        if newTag < latestTag then failwithf "Invalid version: %A < %A" newTag latestTag
-        Trace.tracefn "New version: %s" newTag.AsString
-        newTag
-
-    let tagCurrent (tag) =
-        Git.Branches.tag "./" tag
-
-    let pushCommits () =
-        let runCmd = Git.CommandHelper.runSimpleGitCommand "./"
-        runCmd "push --all" |> ignore
-        runCmd "push --tags" |> ignore
-
-    let triggerCi (options: TriggerCIOptions) =
-        Trace.logfn "%A" options
-        ensureWorkspaceClean () |> ignore
-        let version = validateVersion options
-        tagCurrent version.AsString
-        pushCommits ()
-        ()
-
-    let triggerCiCli (args: seq<string>) =
-        handleCli args triggerCi
-
 module Docker =
     open System.IO
 
@@ -228,8 +187,7 @@ module Docker =
 // Targets
 // ----------------------
 
-let triggerCi (p: TargetParameter) =
-    TriggerCI.triggerCiCli p.Context.Arguments
+
  
 let ciBuild (p: Docker.BuildOptions) =
     let buildParams = Docker.getBuildParams p.Tag
@@ -237,7 +195,7 @@ let ciBuild (p: Docker.BuildOptions) =
     Docker.build buildOptions
     FakeVar.set BuildParams buildParams
 
-Target.create "TriggerCI" triggerCi
+Target.useTriggerCI ()
 
 Target.create "CI:Build" (fun p -> handleCli p.Context.Arguments ciBuild)
 

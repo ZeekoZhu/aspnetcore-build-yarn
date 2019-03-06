@@ -3,10 +3,12 @@ version 5.193.0
 group Build
     storage none
     source https://api.nuget.org/v3/index.json
+    source https://www.myget.org/F/zeekoget/api/v3/index.json
     nuget CommandLineParser.FSharp
     nuget Fake.DotNet.Cli
     nuget Fake.IO.FileSystem
     nuget Fake.Core.Target
     nuget Fake.Tools.Git
-    nuget FSharp.Core 4.5.0
+    nuget FSharp.Core ~> 4.5.0
     nuget Nett 0.10.1
+    nuget MyFakeTools 0.0.9
