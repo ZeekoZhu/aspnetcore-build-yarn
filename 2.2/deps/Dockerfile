@@ -12,7 +12,7 @@ RUN apk add --no-cache \
         libgcc \
         icu-libs \
         libintl \
-        libssl1.0 \
+        libssl1.1 \
         libstdc++ \
         tzdata \
         userspace-rcu \
