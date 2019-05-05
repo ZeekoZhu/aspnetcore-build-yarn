@@ -1,24 +1,24 @@
-FROM node:10.15.2-alpine
+FROM node:10.15.3-alpine
 
-ENV YARN_VERSION 1.13.0
+ENV YARN_VERSION 1.15.2
 
 RUN apk add libgdiplus-dev --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
         --allow-untrusted
 
 RUN apk add --no-cache \
-        ca-certificates curl \
-        # .NET Core dependencies
-        krb5-libs \
-        libgcc \
-        icu-libs \
-        libintl \
-        libssl1.0 \
-        libstdc++ \
-        tzdata \
-        userspace-rcu \
-        zlib \
-        && apk -X https://dl-cdn.alpinelinux.org/alpine/edge/main add --no-cache \
-        lttng-ust
+    ca-certificates \
+    \
+    # .NET Core dependencies
+    krb5-libs \
+    libgcc \
+    libintl \
+    libssl1.1 \
+    libstdc++ \
+    tzdata \
+    userspace-rcu \
+    zlib \
+    lttng-ust \
+    icu-libs
 
 # Configure Kestrel web server to bind to port 80 when present
 ENV ASPNETCORE_URLS=http://+:80 \
