@@ -1,15 +1,11 @@
-version 5.207.0
+version 5.206.0
 // [ FAKE GROUP ]
 group Build
     storage: none
+    framework: netstandard2.0, netcoreapp2.2
     source https://api.nuget.org/v3/index.json
     source https://www.myget.org/F/zeekoget/api/v3/index.json
-    nuget CommandLineParser.FSharp
     nuget Fake.DotNet.Cli
-    nuget Fake.IO.FileSystem
-    nuget Fake.Core.Target
-    nuget Fake.Tools.Git
-    nuget FSharp.Core
     nuget Nett 0.10.1
     nuget MyFakeTools 0.0.13
     nuget TaskBuilder.fs
