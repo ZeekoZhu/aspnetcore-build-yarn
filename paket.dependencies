@@ -12,3 +12,4 @@ group Build
     nuget FSharp.Core ~> 4.5.0
     nuget Nett 0.10.1
     nuget MyFakeTools 0.0.9
+nuget TaskBuilder.fs

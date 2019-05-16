@@ -6,16 +6,12 @@ open System
 open System.IO
 open System.Text.RegularExpressions
 open Fake.Core
-open Fake.DotNet
-open Fake.IO
-open Fake.IO.FileSystemOperators
-open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
 open Fake.Tools
 open CommandLine
-open CommandLine.Text
 open Nett
 open Fake.MyFakeTools
+open System.Net.Http
 
 // ----------------------
 // Var
@@ -27,6 +23,8 @@ let BuildParams = "BuildParams"
 // ----------------------
 // Utils
 // ----------------------
+
+let httpClient = new HttpClient()
 
 let showOutput =
     CreateProcess.redirectOutput
@@ -183,6 +181,59 @@ module Docker =
             dockerCmd "push" [ t ]
            )
 
+module BuildInfo =
+    open FSharp.Control.Tasks.V2
+    let parseDotnetSdkInfo str =
+        let versionRegex = Regex("""^ENV DOTNET_SDK_VERSION (.+)$""", RegexOptions.Multiline)
+        let version = versionRegex.Matches(str).[0].Groups.[1].Value
+        let checksumRegex = Regex("""dotnet_sha512='(\w+)' \\$""", RegexOptions.Multiline)
+        let checksum = checksumRegex.Matches(str).[0].Groups.[1].Value
+        version, checksum
+
+    let parseAspNetInfo str =
+        let versionRegex = Regex("^ENV ASPNETCORE_VERSION (.+)$", RegexOptions.Multiline)
+        let version = versionRegex.Matches(str).[0].Groups.[1].Value
+        let checksumRegex = Regex("""aspnetcore_sha512='(\w+)'""", RegexOptions.Multiline)
+        let checksum = checksumRegex.Matches(str).[0].Groups.[1].Value
+        version, checksum
+
+    let parseNodejsInfo downloadPage =
+        let versionRegex = Regex("""<strong>(.+)<\/strong>""", RegexOptions.Multiline)
+        let version = versionRegex.Matches(downloadPage).[0].Groups.[1].Value
+        let checksums =
+            task {
+                return! httpClient.GetStringAsync(sprintf "https://nodejs.org/dist/v%s/SHASUMS256.txt.asc" version)
+            } |> Async.AwaitTask |> Async.RunSynchronously
+        let checksumRegex = Regex("""^(\w+)\s+node-v.+linux-x64\.tar\.gz$""", RegexOptions.Multiline)
+        let checksum = checksumRegex.Matches(checksums).[0].Groups.[1].Value
+        version, checksum
+
+    let getDepsInfo () =
+        let sdkInfoTask =
+            task {
+                let! resp = httpClient.GetStringAsync("https://raw.githubusercontent.com/dotnet/dotnet-docker/master/2.2/sdk/alpine3.9/amd64/Dockerfile")
+                let result = "Dotnet SDK", (parseDotnetSdkInfo resp)
+                return result
+            } |> Async.AwaitTask
+        let runtimeTask =
+            task {
+                let! resp = httpClient.GetStringAsync("https://raw.githubusercontent.com/dotnet/dotnet-docker/master/2.2/aspnet/alpine3.9/amd64/Dockerfile")
+                let result = "AspNetCore Runtim", (parseAspNetInfo resp)
+                return result
+            } |> Async.AwaitTask
+        let nodejsTask =
+            task {
+                let! resp = httpClient.GetStringAsync("https://nodejs.org/en/download/")
+                let result = "Node.js", (parseNodejsInfo resp)
+                return result
+            } |> Async.AwaitTask
+        Async.Parallel ([sdkInfoTask; runtimeTask; nodejsTask ])
+        |> Async.RunSynchronously
+        |> Seq.iter (fun (name, (version, checksum)) ->
+                Trace.logfn "%s:\nVersion: %s\nChecksum: %s" name version checksum
+            )
+
+
 // ----------------------
 // Targets
 // ----------------------
@@ -202,6 +253,8 @@ Target.create "CI:Build" (fun p -> handleCli p.Context.Arguments ciBuild)
 Target.create "CI:Test" (fun _ -> Docker.testImage())
 
 Target.create "CI:Publish" (fun _ -> Docker.publishImage())
+
+Target.create "update:info" (fun _ -> BuildInfo.getDepsInfo())
 
 Target.create "CI" ignore
 
