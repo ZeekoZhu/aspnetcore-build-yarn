@@ -1,7 +1,7 @@
-version 5.196.2
+version 5.207.0
 // [ FAKE GROUP ]
 group Build
-    storage none
+    storage: none
     source https://api.nuget.org/v3/index.json
     source https://www.myget.org/F/zeekoget/api/v3/index.json
     nuget CommandLineParser.FSharp
@@ -9,7 +9,7 @@ group Build
     nuget Fake.IO.FileSystem
     nuget Fake.Core.Target
     nuget Fake.Tools.Git
-    nuget FSharp.Core ~> 4.5.0
+    nuget FSharp.Core
     nuget Nett 0.10.1
-    nuget MyFakeTools 0.0.9
-nuget TaskBuilder.fs
+    nuget MyFakeTools 0.0.13
+    nuget TaskBuilder.fs

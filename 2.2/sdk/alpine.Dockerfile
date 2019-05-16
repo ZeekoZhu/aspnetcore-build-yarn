@@ -7,7 +7,8 @@ RUN apk add --no-cache icu-libs
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LC_ALL=en_US.UTF-8 \
-    LANG=en_US.UTF-8
+    LANG=en_US.UTF-8 \
+    PATH="${PATH}:/root/.dotnet/tools"
 
 # Install .NET Core SDK
 ENV DOTNET_SDK_VERSION 2.2.204
