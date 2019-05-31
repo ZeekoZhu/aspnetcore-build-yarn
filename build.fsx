@@ -218,12 +218,12 @@ module BuildInfo =
         let runtimeTask =
             task {
                 let! resp = httpClient.GetStringAsync("https://raw.githubusercontent.com/dotnet/dotnet-docker/master/2.2/aspnet/alpine3.9/amd64/Dockerfile")
-                let result = "AspNetCore Runtim", (parseAspNetInfo resp)
+                let result = "AspNetCore Runtime", (parseAspNetInfo resp)
                 return result
             } |> Async.AwaitTask
         let nodejsTask =
             task {
-                let! resp = httpClient.GetStringAsync("https://nodejs.org/en/download/")
+                let! resp = httpClient.GetStringAsync("https://nodejs.org/en/download/current/")
                 let result = "Node.js", (parseNodejsInfo resp)
                 return result
             } |> Async.AwaitTask

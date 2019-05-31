@@ -742,7 +742,7 @@ NUGET
       NETStandard.Library (>= 1.6.1)
       System.ValueTuple (>= 4.4)
   remote: https://www.myget.org/F/zeekoget/api/v3/index.json
-    MyFakeTools (0.0.13)
+    MyFakeTools (0.0.14)
       CommandLineParser.FSharp (>= 2.5 < 3.0)
       Fake.Core.Target (>= 5.12 < 6.0)
       Fake.Tools.Git (>= 5.12 < 6.0)
