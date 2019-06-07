@@ -77,6 +77,7 @@ module Docker =
         { [<Option('t', Required = true)>] Tag: string
           [<Option('f', Required = true)>] Dockerfile: string
           [<Option('c', Required = true)>] ContextPath: string
+          [<Option('v', Required = true)>] Version: string
         }
 
     let build (options: BuildOptions) =
@@ -101,8 +102,8 @@ module Docker =
     type ImageSpec =
         { Images: ImageSpecItem [] }
 
-    let getBuildParams (name: string) =
-        let spec = Toml.ReadFile<ImageSpec>("./spec.toml")
+    let getBuildParams (version: string) (name: string) =
+        let spec = Toml.ReadFile<ImageSpec>(sprintf "./%s.spec.toml" version)
         spec.Images |> Seq.find (fun x -> x.Name = name)
 
     let testImage () =
@@ -183,6 +184,10 @@ module Docker =
 
 module BuildInfo =
     open FSharp.Control.Tasks.V2
+    [<NoComparison>]
+    type BuildInfoOptions =
+        { [<Option('d', "dotnet", Required = true)>] DotnetVersions: string seq
+        }
     let parseDotnetSdkInfo str =
         let versionRegex = Regex("""^ENV DOTNET_SDK_VERSION (.+)$""", RegexOptions.Multiline)
         let version = versionRegex.Matches(str).[0].Groups.[1].Value
@@ -208,16 +213,16 @@ module BuildInfo =
         let checksum = checksumRegex.Matches(checksums).[0].Groups.[1].Value
         version, checksum
 
-    let getDepsInfo () =
-        let sdkInfoTask =
+    let getDepsInfo (options: BuildInfoOptions) =
+        let sdkInfoTask version =
             task {
-                let! resp = httpClient.GetStringAsync("https://raw.githubusercontent.com/dotnet/dotnet-docker/master/2.2/sdk/alpine3.9/amd64/Dockerfile")
+                let! resp = httpClient.GetStringAsync(sprintf "https://raw.githubusercontent.com/dotnet/dotnet-docker/master/%s/sdk/alpine3.9/amd64/Dockerfile" version)
                 let result = "Dotnet SDK", (parseDotnetSdkInfo resp)
                 return result
             } |> Async.AwaitTask
-        let runtimeTask =
+        let runtimeTask version =
             task {
-                let! resp = httpClient.GetStringAsync("https://raw.githubusercontent.com/dotnet/dotnet-docker/master/2.2/aspnet/alpine3.9/amd64/Dockerfile")
+                let! resp = httpClient.GetStringAsync(sprintf "https://raw.githubusercontent.com/dotnet/dotnet-docker/master/%s/aspnet/alpine3.9/amd64/Dockerfile" version)
                 let result = "AspNetCore Runtime", (parseAspNetInfo resp)
                 return result
             } |> Async.AwaitTask
@@ -227,11 +232,19 @@ module BuildInfo =
                 let result = "Node.js", (parseNodejsInfo resp)
                 return result
             } |> Async.AwaitTask
-        Async.Parallel ([sdkInfoTask; runtimeTask; nodejsTask ])
+        let tasks =
+            seq {
+                for v in options.DotnetVersions do
+                    yield sdkInfoTask v
+                    yield runtimeTask v
+                yield nodejsTask
+            }
+        Async.Parallel tasks
         |> Async.RunSynchronously
         |> Seq.iter (fun (name, (version, checksum)) ->
                 Trace.logfn "%s:\nVersion: %s\nChecksum: %s" name version checksum
             )
+
 
 
 // ----------------------
@@ -241,7 +254,7 @@ module BuildInfo =
 
  
 let ciBuild (p: Docker.BuildOptions) =
-    let buildParams = Docker.getBuildParams p.Tag
+    let buildParams = Docker.getBuildParams p.Version p.Tag
     let buildOptions = { p with Tag = buildParams.TestImage }
     Docker.build buildOptions
     FakeVar.set BuildParams buildParams
@@ -254,7 +267,9 @@ Target.create "CI:Test" (fun _ -> Docker.testImage())
 
 Target.create "CI:Publish" (fun _ -> Docker.publishImage())
 
-Target.create "update:info" (fun _ -> BuildInfo.getDepsInfo())
+Target.create "update:info" (fun p ->
+    handleCli p.Context.Arguments BuildInfo.getDepsInfo
+)
 
 Target.create "CI" ignore
 
