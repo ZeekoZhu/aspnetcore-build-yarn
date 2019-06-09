@@ -1,35 +1,40 @@
 # aspnetcore-build-yarn
 
-[![Build Status](https://travis-ci.org/ZeekoZhu/aspnetcore-build-yarn.svg?branch=master)](https://travis-ci.org/ZeekoZhu/aspnetcore-build-yarn)
-
-*Based on `microsoft/aspnetcore-build:2.0` and `microsoft/dotnet:2.1-sdk`*
+[![Build Status](https://travis-ci.org/ZeekoZhu/aspnetcore-build-yarn.svg)](https://travis-ci.org/ZeekoZhu/aspnetcore-build-yarn)
 
 ## Tags
 
 ### [aspnetcore-build-yarn](https://hub.docker.com/r/zeekozhu/aspnetcore-build-yarn/)
 
-Official `aspnetcore-build` docker image with nodejs and yarn preinstalled.
+Official dotnet-sdk docker image with nodejs and yarn preinstalled.
 
-- `2.0.8`,`2.0` [2.0/Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.0/Dockerfile)
-- `2.1.6`, `2.1`, `latest` [2.1/sdk/Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.1/sdk/Dockerfile)
-- `2.1.6-alpine`,`2.1-alpine` [2.1/sdk/alpine.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.1/sdk/alpine.Dockerfile)
-- `2.1.6-chromium`,`2.1-chromium` [2.1/sdk/chromium.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.1/sdk/alpine.Dockerfile)
-- `2.2.2-chromium`,`2.2-chromium` [2.2/sdk/chromium.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.1/sdk/alpine.Dockerfile)
+- `2.2.300-alpine`,`2.2-alpine` [3.0/runtime/alpine.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/3.0/sdk/alpine.Dockerfile)
+- `2.2.300-chromium`,`2.2-chromium` [2.2/sdk/chromium.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.2/sdk/alpine.Dockerfile)
+- *Preview* `3.0.100-chromium`,`3.0-chromium` [3.0/sdk/chromium.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/3.0/sdk/alpine.Dockerfile)
+- *Preview* `3.0-alpine`,`3.0.100-alpine` [3.0/runtime/alpine.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/3.0/sdk/alpine.Dockerfile)
 
 ### [aspnetcore-node](https://hub.docker.com/r/zeekozhu/aspnetcore-node/)
 
-Official `dotnet:2.x-aspnetcore-runtime` docker image with nodejs preinstalled.
+Official aspnetcore runtime docker image with nodejs preinstalled.
 
-- `2.1`,`2.1.6` [2.1/runtime/Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.1/runtime/Dockerfile)
-- `2.1-alpine`,`2.1.6-alpine` [2.1/runtime/alpine.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.1/runtime/alpine.Dockerfile)
-- `2.2-alpine`,`2.2.2-alpine` [2.2/runtime/alpine.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.1/runtime/alpine.Dockerfile)
+- `2.2-alpine`,`2.2.5-alpine` [2.2/runtime/alpine.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.2/runtime/alpine.Dockerfile)
+- *Preview* `3.0-alpine`,`3.0.0-alpine` [3.0/runtime/alpine.Dockerfile](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/3.0/runtime/alpine.Dockerfile)
 
-## Different from original 2.0.x image
+## Different from original 2.2 image
 
-- remove `gulp` and `bower`
-- add `yarn@1.9.4`
+- add `yarn@1.16.0`
+- add `nodejs@12.3.1`
 
 ## Different from original 2.1.x image
 
-- add `nodejs@11.10.1`
-- add `yarn@1.13.0`
+- add `yarn@1.16.0`
+- add `nodejs@12.4.0`
+
+More details can be found in specifications:
+
+- [2.2.spec.toml](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.2.spec.toml)
+- [3.0.spec.toml](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/3.0.spec.toml)
+
+## Notes
+
+In 3.0 preview images, it is not confirmed that chromnium(=73.0.3683.75-1) will work with latest selenium
