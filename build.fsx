@@ -125,7 +125,7 @@ module Docker =
                 if imageSpec.Sdk
                 then dockerRunRm ["dotnet"; "--version"]
                 else
-                    let reg = Regex("^  Version: (?<runtime>.*)$", RegexOptions.Multiline)
+                    let reg = Regex("^  Microsoft.AspNetCore.App (?<runtime>.*) \\[.*\\]$", RegexOptions.Multiline)
                     let result = dockerRunRm ["dotnet"; "--info"]
                     (reg.Match(result).Groups.Item "runtime").Value
 
