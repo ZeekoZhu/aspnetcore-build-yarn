@@ -96,6 +96,7 @@ module Docker =
           Latest: bool
           SkipTest: bool
           Tag: string
+          Daily: bool
         }
 
     [<CLIMutable>]
@@ -166,10 +167,11 @@ module Docker =
         let minor = major + "." + string version.Minor
         let patch = minor + "." + string version.Patch
         seq {
-            yield major
-            yield minor
+            if not spec.Daily then
+                yield major
+                yield minor
+                if spec.Latest then yield "latest"
             yield patch
-            if spec.Latest then yield "latest"
         }
         |> Seq.map (fun t ->
              let tag = spec.Tag + ":" + t
