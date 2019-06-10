@@ -416,9 +416,14 @@ Target.create "daily:build" ( fun _ ->
     DailyBuild.buildAllDailyImages ()
 )
 
+Target.create "daily:commit" ( fun _ ->
+    DailyBuild.commitChanges ()
+)
+
 Target.create "daily" ignore
 
-"daily:prepare" ==> "daily:build" ==> "daily"
+"daily:prepare" ==> "daily:build"
+    ==> "daily:commit" ==> "daily"
 
 Target.create "Empty" ignore
 
