@@ -9,7 +9,8 @@ ENV ASPNETCORE_URLS http://+:80 \
     # Skip extraction of XML docs - generally not useful within an image/container - helps perfomance
     NUGET_XMLDOC_MODE=skip \
     PATH="${PATH}:/root/.dotnet/tools" \
-    CHROME_BIN=/usr/bin/chromium
+    CHROME_BIN=/usr/bin/chromium \
+    DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=3
 
 # set up node
 ENV NODE_VERSION 12.4.0
