@@ -364,19 +364,27 @@ module DailyBuild =
             Templating.renderAllTemplates version info
 
     let buildDailyImages (dotnetVersion) =
+        let convertVersionedString (str: string) version =
+            str.Replace("%s", version)
         let convertCmd (cmd: string) =
             cmd.Split([|' '|])
             |> Array.toList
-        Target.run 1 "CI" (sprintf "-t zeekozhu/aspnetcore-build-yarn -f daily/%s/sdk/Dockerfile -c ./daily/%s/sdk -s ./daily/daily.spec.toml" dotnetVersion dotnetVersion |> convertCmd)
-        Target.run 1 "CI" (sprintf "-t zeekozhu/aspnetcore-build-yarn:chromium -f daily/%s/sdk/chromium.Dockerfile -c ./daily/%s/sdk -s ./daily/daily.spec.toml" dotnetVersion dotnetVersion |> convertCmd)
-        Target.run 1 "CI" (sprintf "-t zeekozhu/aspnetcore-node -f daily/%s/runtime/Dockerfile -c ./daily/%s/runtime -s ./daily/daily.spec.toml" dotnetVersion dotnetVersion |> convertCmd)
-        Target.run 1 "CI" (sprintf "-t zeekozhu/aspnetcore-node-deps -f daily/%s/deps/Dockerfile -c ./daily/%s/deps -s ./daily/daily.spec.toml" dotnetVersion dotnetVersion |> convertCmd)
-        Target.run 1 "CI" (sprintf "-t zeekozhu/aspnetcore-node:alpine -f daily/%s/runtime/alpine.Dockerfile -c ./daily/%s/runtime -s ./daily/daily.spec.toml" dotnetVersion dotnetVersion |> convertCmd)
-        Target.run 1 "CI" (sprintf "-t zeekozhu/aspnetcore-build-yarn:alpine -f daily/%s/sdk/alpine.Dockerfile -c ./daily/%s/sdk -s ./daily/daily.spec.toml" dotnetVersion dotnetVersion |> convertCmd)
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-build-yarn -f daily/%s/sdk/Dockerfile -c ./daily/%s/sdk -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-build-yarn:chromium -f daily/%s/sdk/chromium.Dockerfile -c ./daily/%s/sdk -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-node -f daily/%s/runtime/Dockerfile -c ./daily/%s/runtime -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-node-deps -f daily/%s/deps/Dockerfile -c ./daily/%s/deps -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-node:alpine -f daily/%s/runtime/alpine.Dockerfile -c ./daily/%s/runtime -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-build-yarn:alpine -f daily/%s/sdk/alpine.Dockerfile -c ./daily/%s/sdk -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
 
     let buildAllDailyImages () =
         trackingVersions
         |> Seq.iter buildDailyImages
+    
+    let commitChanges () =
+        let now = DateTime.Now.ToString("O")
+        runCmd "git" ["add"; "."]
+        runCmd "git" ["commit"; "-m"; "DailyBuild: " + now]
+        runCmd "git" ["push"]
 
 // ----------------------
 // Targets
