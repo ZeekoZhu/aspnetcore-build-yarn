@@ -165,7 +165,7 @@ module Docker =
         let version = SemVer.parse spec.Dotnet
         let major = string version.Major
         let minor = major + "." + string version.Minor
-        let patch = minor + "." + string version.Patch
+        let patch = minor + "." + string version.Original.Value
         seq {
             if not spec.Daily then
                 yield major
@@ -333,7 +333,7 @@ module DailyBuild =
             let! (sdkVersion, sdkSha) = getSdkInfoAsync (dotnetVersion)
             let! (aspnetVersion, aspnetSha) = getRuntimeInfoAsync (dotnetVersion)
             let! yarnVersion = getYarnInfoAsync ()
-            let depsVersion = aspnetVersion
+            let depsVersion = aspnetVersion + "-daily"
             let aspnetImage = dotnetVersion
             let sdkImage = dotnetVersion
             return
