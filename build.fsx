@@ -67,6 +67,21 @@ let handleCli<'t> (args: seq<string>) (fn: 't -> unit) =
         failwithf "Invalid: %A, Errors: %A" args notParsed.Errors
     | _ -> failwith "Invalid parser result"
 
+let gitPush () =
+    let gitUsr = Environment.environVar "GITHUB_USER"
+    let gitToken = Environment.environVar "GITHUB_TOKEN"
+    let input = StreamRef.Empty
+    let proc =
+        CreateProcess.fromRawCommand "git" ["push"; "origin"; "HEAD:daily"]
+        |> CreateProcess.withStandardInput (CreatePipe input)
+        |> showOutput
+        |> Proc.start
+    use inputWriter = new StreamWriter(input.Value)
+    inputWriter.WriteLine gitUsr
+    inputWriter.WriteLine gitToken
+    inputWriter.Close ()
+    proc.Wait ()
+
 // ----------------------
 // Command Line Interface
 // ----------------------
@@ -386,7 +401,7 @@ module DailyBuild =
         let now = DateTime.Now.ToString("O")
         runCmd "git" ["add"; "."]
         runCmd "git" ["commit"; "-m"; "DailyBuild: " + now]
-        runCmd "git" ["push"]
+        gitPush ()
 
 // ----------------------
 // Targets

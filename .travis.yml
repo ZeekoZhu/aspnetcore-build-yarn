@@ -55,7 +55,5 @@ jobs:
       if: tag =~ ^3\.0\.[0-9.]+([-a-zA-Z0-9.]+)?$
     # daily
     - stage: build daily images
-      github_token: $GITHUB_TOKEN
-      keep_history: true
       script: ./fake.sh build -t daily
       if: branch = daily
