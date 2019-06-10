@@ -165,7 +165,7 @@ module Docker =
         let version = SemVer.parse spec.Dotnet
         let major = string version.Major
         let minor = major + "." + string version.Minor
-        let patch = minor + "." + string version.Original.Value
+        let patch = version.Original.Value
         seq {
             if not spec.Daily then
                 yield major
