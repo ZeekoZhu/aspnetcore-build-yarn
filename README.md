@@ -35,6 +35,3 @@ More details can be found in specifications:
 - [2.2.spec.toml](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.2.spec.toml)
 - [3.0.spec.toml](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/3.0.spec.toml)
 
-## Notes
-
-In 3.0 preview images, it is not confirmed that chromnium(=73.0.3683.75-1) will work with latest selenium

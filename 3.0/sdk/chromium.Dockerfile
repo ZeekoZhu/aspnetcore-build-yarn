@@ -8,7 +8,8 @@ ENV ASPNETCORE_URLS http://+:80 \
     DOTNET_USE_POLLING_FILE_WATCHER=true \
     # Skip extraction of XML docs - generally not useful within an image/container - helps perfomance
     NUGET_XMLDOC_MODE=skip \
-    PATH="${PATH}:/root/.dotnet/tools"
+    PATH="${PATH}:/root/.dotnet/tools" \
+    CHROME_BIN=/usr/bin/chromium
 
 # set up node
 ENV NODE_VERSION 12.4.0
