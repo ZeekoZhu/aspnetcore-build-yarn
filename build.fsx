@@ -323,7 +323,7 @@ module DailyBuild =
           SdkVersion: string
           SdkSHA: string
           SdkImage: string
-          FetchTime: DateTime
+          FetchTime: string
         }
     module Templating =
         let getAllTemplates () =
@@ -363,7 +363,7 @@ module DailyBuild =
                   SdkSHA = sdkSha
                   SdkVersion = sdkVersion
                   SdkImage = sdkImage
-                  FetchTime = DateTime.Now
+                  FetchTime = DateTime.Now.ToString("O")
                 }
         }
 
