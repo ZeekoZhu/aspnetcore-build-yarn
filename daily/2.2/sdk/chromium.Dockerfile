@@ -26,7 +26,7 @@ RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
 
 # Install chromium
 RUN apt-get -qq update \
-    && apt-get install -y chromium=73.0.3683.75-1 --no-install-recommends \
+    && apt-get install -y chromium --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Trigger first run experience by running arbitrary cmd to populate local package cache
