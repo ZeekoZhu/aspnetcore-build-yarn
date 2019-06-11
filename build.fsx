@@ -70,18 +70,7 @@ let handleCli<'t> (args: seq<string>) (fn: 't -> unit) =
 let gitPush () =
     let gitUsr = Environment.environVar "GITHUB_USER"
     let gitToken = Environment.environVar "GITHUB_TOKEN"
-    Trace.tracefn "Length: %i" gitToken.Length
-    let input = StreamRef.Empty
-    let proc =
-        CreateProcess.fromRawCommand "git" ["push"; "origin"; "HEAD:daily"]
-        |> CreateProcess.withStandardInput (CreatePipe input)
-        |> showOutput
-        |> Proc.start
-    use inputWriter = new StreamWriter(input.Value)
-    inputWriter.WriteLine gitUsr
-    inputWriter.WriteLine gitToken
-    inputWriter.Close ()
-    proc.Wait ()
+    runCmd "git" ["push"; sprintf "https://%s:%s@github.com/ZeekoZhu/aspnetcore-yarn-build" gitUsr gitToken; "HEAD:daily"]
 
 // ----------------------
 // Command Line Interface
