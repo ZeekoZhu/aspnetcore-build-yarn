@@ -48,7 +48,7 @@ let dockerCmd (subCmd: string) (args: string list) = runCmd "docker" (subCmd::ar
 
 let runGitCmd command =
     let (success, stdout, stderr) = Git.CommandHelper.runGitCommand "./" command
-    if success then stdout |> List.head
+    if success then String.Join ("\n", stdout)
     else failwith stderr
 
 let getLatestTag () =
@@ -71,6 +71,12 @@ let gitPush () =
     let gitUsr = Environment.environVar "GITHUB_USER"
     let gitToken = Environment.environVar "GITHUB_TOKEN"
     runCmd "git" ["push"; sprintf "https://%s:%s@github.com/ZeekoZhu/aspnetcore-build-yarn" gitUsr gitToken; "HEAD:daily"]
+
+let checkTemplateUpdate () =
+    let changed =
+        runGitCmd "diff HEAD~ --name-only"
+    changed.Contains "daily-template/"
+
 
 // ----------------------
 // Command Line Interface
@@ -441,6 +447,8 @@ Target.create "CI" ignore
 Target.create "daily:prepare" (fun _ ->
     FakeVar.set "SkipVersions" List.empty<string>
     DailyBuild.getAllDailyBuildInfo ()
+    if checkTemplateUpdate() then
+        FakeVar.set "SkipVersions" List.empty<string>
     FakeVar.getOrFail<string list> "SkipVersions"
     |> Seq.iter (Trace.tracefn "%s is up to date, will be skipped")
 )
