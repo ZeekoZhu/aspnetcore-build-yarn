@@ -441,6 +441,8 @@ Target.create "CI" ignore
 Target.create "daily:prepare" (fun _ ->
     FakeVar.set "SkipVersions" List.empty<string>
     DailyBuild.getAllDailyBuildInfo ()
+    FakeVar.getOrFail<string list> "SkipVersions"
+    |> Seq.iter (Trace.tracefn "%s is up to date, will be skipped")
 )
 
 Target.create "daily:build" ( fun _ -> 
