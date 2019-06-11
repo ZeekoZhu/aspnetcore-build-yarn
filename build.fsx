@@ -443,7 +443,7 @@ Target.create "CI" ignore
 "CI:Build" ==> "CI:Test" ==> "CI:Publish" ==> "CI"
 
 Target.create "daily:prepare" (fun _ ->
-    FakeVar.set "SkipVersions" []
+    FakeVar.set "SkipVersions" List.empty<string>
     DailyBuild.getAllDailyBuildInfo ()
 )
 
