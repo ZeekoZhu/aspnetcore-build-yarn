@@ -70,6 +70,7 @@ let handleCli<'t> (args: seq<string>) (fn: 't -> unit) =
 let gitPush () =
     let gitUsr = Environment.environVar "GITHUB_USER"
     let gitToken = Environment.environVar "GITHUB_TOKEN"
+    Trace.tracefn "Length: %i" gitToken.Length
     let input = StreamRef.Empty
     let proc =
         CreateProcess.fromRawCommand "git" ["push"; "origin"; "HEAD:daily"]
