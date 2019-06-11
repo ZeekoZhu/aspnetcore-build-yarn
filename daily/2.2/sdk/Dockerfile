@@ -7,10 +7,11 @@ ENV ASPNETCORE_URLS http://+:80 \
     # Enable correct mode for dotnet watch (only mode supported in a container)
     DOTNET_USE_POLLING_FILE_WATCHER=true \
     # Skip extraction of XML docs - generally not useful within an image/container - helps perfomance
-    NUGET_XMLDOC_MODE=skip \
-    DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
+    NUGET_XMLDOC_MODE=skip
+
+ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     FAKE_DETAILED_ERRORS=true \
-    PATH="${PATH}:/root/.dotnet/tools"
+    PATH="/root/.dotnet/tools:${PATH}"
 
 # set up node
 ENV NODE_VERSION 12.4.0

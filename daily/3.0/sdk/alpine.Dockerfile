@@ -7,11 +7,11 @@ RUN apk add --no-cache icu-libs
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LC_ALL=en_US.UTF-8 \
-    LANG=en_US.UTF-8 \
+    LANG=en_US.UTF-8
+
+ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     FAKE_DETAILED_ERRORS=true \
-    # Enable roll-forward
-    DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
-    PATH="${PATH}:/root/.dotnet/tools"
+    PATH="/root/.dotnet/tools:${PATH}"
 
 # Install .NET Core SDK
 ENV DOTNET_SDK_VERSION 3.0.100-preview5-011568
