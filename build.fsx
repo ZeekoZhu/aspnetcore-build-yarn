@@ -313,6 +313,7 @@ module DailyBuild =
     open Fake.IO
     open Fake.IO.FileSystemOperators
     open Fake.IO.Globbing.Operators
+    [<CLIMutable>]
     type DailyBuildInfo =
         { NodeVersion: string
           YarnVersion: string
