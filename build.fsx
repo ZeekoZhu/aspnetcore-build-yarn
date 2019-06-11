@@ -377,11 +377,24 @@ module DailyBuild =
             File.ReadAllLines("./tracking-versions.txt")
             |> Seq.filter (fun x -> (not (String.isNullOrWhiteSpace x)))
         for version in versions do
-            let info = getDailyBuildInfo version |> Async.RunSynchronously
-            Trace.tracefn "%A" info
-            Directory.ensure ("daily" </> version)
-            File.writeString false ("daily" </> version </> "daily-build-info.toml") (Nett.Toml.WriteString info)
-            Templating.renderAllTemplates version info
+            let infoFile = "daily" </> version </> "daily-build-info.toml"
+            
+            let info =
+                getDailyBuildInfo version |> Async.RunSynchronously
+            let previousInfo =
+                { (File.readAsString infoFile
+                    |> Toml.ReadString<DailyBuildInfo>)
+                    with
+                        FetchTime = info.FetchTime
+                }
+            if info = previousInfo then
+                let skip = FakeVar.getOrFail<string list> "SkipVersions"
+                FakeVar.set "SkipVersions" (version::skip)
+            else
+                Trace.tracefn "%A" info
+                Directory.ensure ("daily" </> version)
+                File.writeString false (infoFile) (Nett.Toml.WriteString info)
+                Templating.renderAllTemplates version info
 
     let buildDailyImages (dotnetVersion) =
         let convertVersionedString (str: string) version =
@@ -397,7 +410,9 @@ module DailyBuild =
         Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-build-yarn:alpine -f daily/%s/sdk/alpine.Dockerfile -c ./daily/%s/sdk -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
 
     let buildAllDailyImages () =
+        let skip = FakeVar.getOrFail<string list> "SkipVersions"
         trackingVersions
+        |> Seq.except skip
         |> Seq.iter buildDailyImages
     
     let commitChanges () =
@@ -427,6 +442,7 @@ Target.create "CI" ignore
 "CI:Build" ==> "CI:Test" ==> "CI:Publish" ==> "CI"
 
 Target.create "daily:prepare" (fun _ ->
+    FakeVar.set "SkipVersions" []
     DailyBuild.getAllDailyBuildInfo ()
 )
 
