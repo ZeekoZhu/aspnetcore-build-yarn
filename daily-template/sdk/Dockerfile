@@ -9,6 +9,7 @@ ENV ASPNETCORE_URLS http://+:80 \
     # Skip extraction of XML docs - generally not useful within an image/container - helps perfomance
     NUGET_XMLDOC_MODE=skip \
     DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
+    FAKE_DETAILED_ERRORS=true \
     PATH="${PATH}:/root/.dotnet/tools"
 
 # set up node
