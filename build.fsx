@@ -70,7 +70,7 @@ let handleCli<'t> (args: seq<string>) (fn: 't -> unit) =
 let gitPush () =
     let gitUsr = Environment.environVar "GITHUB_USER"
     let gitToken = Environment.environVar "GITHUB_TOKEN"
-    runCmd "git" ["push"; sprintf "https://%s:%s@github.com/ZeekoZhu/aspnetcore-yarn-build" gitUsr gitToken; "HEAD:daily"]
+    runCmd "git" ["push"; sprintf "https://%s:%s@github.com/ZeekoZhu/aspnetcore-build-yarn" gitUsr gitToken; "HEAD:daily"]
 
 // ----------------------
 // Command Line Interface
