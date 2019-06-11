@@ -406,10 +406,17 @@ module DailyBuild =
         |> Seq.iter buildDailyImages
     
     let commitChanges () =
-        let now = DateTime.Now.ToString("O")
-        runCmd "git" ["add"; "."]
-        runCmd "git" ["commit"; "-m"; "DailyBuild: " + now]
-        gitPush ()
+        let skip = FakeVar.getOrFail<string list> "SkipVersions"
+        let update =
+            trackingVersions
+            |> Seq.except skip
+            |> Seq.isEmpty
+        if update then
+            let now = DateTime.Now.ToString("O")
+            runCmd "git" ["add"; "."]
+            runCmd "git" ["commit"; "-m"; "DailyBuild: " + now]
+            gitPush ()
+        else ()
 
 // ----------------------
 // Targets
