@@ -407,11 +407,11 @@ module DailyBuild =
     
     let commitChanges () =
         let skip = FakeVar.getOrFail<string list> "SkipVersions"
-        let update =
+        let skipCommit =
             trackingVersions
             |> Seq.except skip
             |> Seq.isEmpty
-        if update then
+        if not skipCommit then
             let now = DateTime.Now.ToString("O")
             runCmd "git" ["add"; "."]
             runCmd "git" ["commit"; "-m"; "DailyBuild: " + now]
