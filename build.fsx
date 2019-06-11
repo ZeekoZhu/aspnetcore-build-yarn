@@ -384,14 +384,12 @@ module DailyBuild =
                     with
                         FetchTime = info.FetchTime
                 }
+            Directory.ensure ("daily" </> version)
             if info = previousInfo then
                 let skip = FakeVar.getOrFail<string list> "SkipVersions"
                 FakeVar.set "SkipVersions" (version::skip)
-            else
-                Trace.tracefn "%A" info
-                Directory.ensure ("daily" </> version)
-                File.writeString false (infoFile) (Nett.Toml.WriteString info)
-                Templating.renderAllTemplates version info
+            File.writeString false (infoFile) (Nett.Toml.WriteString info)
+            Templating.renderAllTemplates version info
 
     let buildDailyImages (dotnetVersion) =
         let convertVersionedString (str: string) version =
