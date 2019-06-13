@@ -251,6 +251,27 @@ module BuildInfo =
             return result
         } |> Async.AwaitTask
 
+    let getImageVersion (tagListUrl: string) version =
+        let versionPattern = @"""" + Regex.Escape(version) + @"\.\d+(?:-preview\d?)?"""
+        let regex = Regex(versionPattern)
+        task {
+            let! resp = httpClient.GetStringAsync(tagListUrl)
+            let result =
+                seq {
+                    for _match in regex.Matches(resp) do
+                        yield _match.Value.Trim([|'"'|]) |> SemVer.parse
+                }
+                |> Seq.max
+            return result.AsString
+        }
+        |> Async.AwaitTask
+
+    let getSdkImage =
+        getImageVersion "https://mcr.microsoft.com/v2/dotnet/core/sdk/tags/list"
+
+    let getAspNetImage =
+        getImageVersion "https://mcr.microsoft.com/v2/dotnet/core/aspnet/tags/list"
+
     let getNodeJsInfoAsync () =
         task {
             let! resp = httpClient.GetStringAsync("https://nodejs.org/en/download/current/")
@@ -347,9 +368,9 @@ module DailyBuild =
             let! (sdkVersion, sdkSha) = getSdkInfoAsync (dotnetVersion)
             let! (aspnetVersion, aspnetSha) = getRuntimeInfoAsync (dotnetVersion)
             let! yarnVersion = getYarnInfoAsync ()
-            let depsVersion = aspnetVersion + "-daily"
-            let aspnetImage = dotnetVersion
-            let sdkImage = dotnetVersion
+            let depsVersion = aspnetVersion
+            let! aspnetImage = getAspNetImage dotnetVersion
+            let! sdkImage = getSdkImage dotnetVersion
             return
                 { NodeVersion = nodeVersion
                   YarnVersion = yarnVersion
@@ -370,10 +391,7 @@ module DailyBuild =
         |> Seq.filter (fun x -> (not (String.isNullOrWhiteSpace x)))
 
     let getAllDailyBuildInfo () =
-        let versions =
-            File.ReadAllLines("./tracking-versions.txt")
-            |> Seq.filter (fun x -> (not (String.isNullOrWhiteSpace x)))
-        for version in versions do
+        for version in trackingVersions do
             let infoFile = "daily" </> version </> "daily-build-info.toml"
             
             let info =
