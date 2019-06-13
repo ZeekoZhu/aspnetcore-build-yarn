@@ -1,4 +1,4 @@
-FROM zeekozhu/aspnetcore-node-deps:2.2
+FROM zeekozhu/aspnetcore-node-deps:2.2.5
 
 
 # Copy and paste from https://github.com/dotnet/dotnet-docker/blob/master/2.2/sdk/alpine3.8/amd64/Dockerfile
@@ -7,8 +7,11 @@ RUN apk add --no-cache icu-libs
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LC_ALL=en_US.UTF-8 \
-    LANG=en_US.UTF-8 \
-    PATH="${PATH}:/root/.dotnet/tools"
+    LANG=en_US.UTF-8
+
+ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
+    FAKE_DETAILED_ERRORS=true \
+    PATH="/root/.dotnet/tools:${PATH}"
 
 # Install .NET Core SDK
 ENV DOTNET_SDK_VERSION 2.2.300

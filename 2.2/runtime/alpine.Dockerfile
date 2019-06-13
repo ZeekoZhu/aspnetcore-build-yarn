@@ -1,6 +1,6 @@
-FROM zeekozhu/aspnetcore-node-deps:2.2
+FROM zeekozhu/aspnetcore-node-deps:2.2.5
 
-# Copy and paste from https://github.com/dotnet/dotnet-docker/blob/master/2.2/aspnet/alpine3.9/amd64/Dockerfile
+# Copy and paste from https://github.com/dotnet/dotnet-docker/blob/master/3.0/aspnet/alpine3.9/amd64/Dockerfile
 
 # Install ASP.NET Core
 ENV ASPNETCORE_VERSION 2.2.5
