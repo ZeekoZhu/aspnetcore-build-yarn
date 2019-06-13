@@ -6,10 +6,10 @@ Dotnet = "3.0.100-preview6-012264"
 Node = "v12.4.0"
 Yarn = "1.16.0"
 Sdk = true
-Suffix = "daily"
+Suffix = ""
 Latest = true
 SkipTest = false
-Daily = true
+Daily = false
 
 [[Images]]
 Name = "zeekozhu/aspnetcore-build-yarn:chromium"
@@ -19,10 +19,10 @@ Dotnet = "3.0.100-preview6-012264"
 Node = "v12.4.0"
 Yarn = "1.16.0"
 Sdk = true
-Suffix = "chromium-daily"
+Suffix = "chromium"
 Latest = false
 SkipTest = false
-Daily = true
+Daily = false
 
 [[Images]]
 Name = "zeekozhu/aspnetcore-node"
@@ -32,10 +32,10 @@ Dotnet = "3.0.0-preview6.19307.2"
 Node = "v12.4.0"
 Yarn = "1.16.0"
 Sdk = false
-Suffix = "daily"
+Suffix = ""
 Latest = true
 SkipTest = false
-Daily = true
+Daily = false
 
 [[Images]]
 Name = "zeekozhu/aspnetcore-node:alpine"
@@ -45,10 +45,10 @@ Dotnet = "3.0.0-preview6.19307.2"
 Node = "v12.4.0"
 Yarn = "1.16.0"
 Sdk = false
-Suffix = "alpine-daily"
+Suffix = "alpine"
 Latest = false
 SkipTest = false
-Daily = true
+Daily = false
 
 [[Images]]
 Name = "zeekozhu/aspnetcore-build-yarn:alpine"
@@ -58,10 +58,10 @@ Dotnet = "3.0.100-preview6-012264"
 Node = "v12.4.0"
 Yarn = "1.16.0"
 Sdk = true
-Suffix = "alpine-daily"
+Suffix = "alpine"
 Latest = false
 SkipTest = false
-Daily = true
+Daily = false
 
 [[Images]]
 Name = "zeekozhu/aspnetcore-node-deps"
@@ -71,7 +71,7 @@ Dotnet = "3.0.0-preview6.19307.2"
 Node = "v12.4.0"
 Yarn = "1.16.0"
 Sdk = false
-Suffix = "daily"
+Suffix = ""
 Latest = false
 SkipTest = true
-Daily = true
+Daily = false

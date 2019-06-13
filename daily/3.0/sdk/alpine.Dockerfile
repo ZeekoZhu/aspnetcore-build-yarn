@@ -1,4 +1,4 @@
-FROM zeekozhu/aspnetcore-node-deps:3.0.0-preview6.19307.2-daily
+FROM zeekozhu/aspnetcore-node-deps:3.0.0-preview6.19307.2
 
 
 # Copy and paste from https://github.com/dotnet/dotnet-docker/blob/master/2.2/sdk/alpine3.8/amd64/Dockerfile
