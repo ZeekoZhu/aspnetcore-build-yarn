@@ -287,41 +287,53 @@ module BuildInfo =
 
     let getDepsInfo (options: BuildInfoOptions) =
         let sdkInfoTask version =
-            task {
+            async {
                 let! resp = getSdkInfoAsync version
                 let result = "Dotnet SDK", resp
                 return result
-            } |> Async.AwaitTask
+            }
         let runtimeTask version =
-            task {
+            async {
                 let! resp = getRuntimeInfoAsync version
                 let result = "AspNetCore Runtime", resp
                 return result
-            } |> Async.AwaitTask
+            }
         let nodejsTask =
-            task {
+            async {
                 let! resp = getNodeJsInfoAsync ()
                 let result = "Node.js", resp
                 return result
-            } |> Async.AwaitTask
+            }
         let yarnTask =
-            task {
+            async {
                 let! resp = getYarnInfoAsync ()
                 let result = "Yarn", (resp, "N/A")
                 return result
-            } |> Async.AwaitTask
+            }
+        let aspnetImageTask version =
+            async {
+                let! resp = getAspNetImage version
+                return "AspNetCore Image", (resp, "N/A")
+            }
+        let sdkImageVersion version =
+            async {
+                let! resp = getSdkImage version
+                return "SDK Image", (resp, "N/A")
+            }
         let tasks =
             seq {
                 for v in options.DotnetVersions do
                     yield sdkInfoTask v
                     yield runtimeTask v
+                    yield aspnetImageTask v
+                    yield sdkImageVersion v
                 yield nodejsTask
                 yield yarnTask
             }
         Async.Parallel tasks
         |> Async.RunSynchronously
         |> Seq.iter (fun (name, (version, checksum)) ->
-                Trace.logfn "%s:\nVersion: %s\nChecksum: %s" name version checksum
+                Trace.logfn "%s:\nVersion: %s\nChecksum: %s\n" name version checksum
             )
 
 
