@@ -1,0 +1,77 @@
+[[Images]]
+Name = "zeekozhu/aspnetcore-build-yarn"
+Tag = "zeekozhu/aspnetcore-build-yarn"
+TestImage = "zeekozhu/aspnetcore-build-yarn:tmp"
+Dotnet = "{{SdkVersion}}"
+Node = "v{{NodeVersion}}"
+Yarn = "{{YarnVersion}}"
+Sdk = true
+Suffix = "daily"
+Latest = true
+SkipTest = false
+Daily = true
+
+[[Images]]
+Name = "zeekozhu/aspnetcore-build-yarn:chromium"
+Tag = "zeekozhu/aspnetcore-build-yarn"
+TestImage = "zeekozhu/aspnetcore-build-yarn:tmp-chromium"
+Dotnet = "{{SdkVersion}}"
+Node = "v{{NodeVersion}}"
+Yarn = "{{YarnVersion}}"
+Sdk = true
+Suffix = "chromium-daily"
+Latest = false
+SkipTest = false
+Daily = true
+
+[[Images]]
+Name = "zeekozhu/aspnetcore-node"
+Tag = "zeekozhu/aspnetcore-node"
+TestImage = "zeekozhu/aspnetcore-node:tmp"
+Dotnet = "{{AspNetCoreVersion}}"
+Node = "v{{NodeVersion}}"
+Yarn = "{{YarnVersion}}"
+Sdk = false
+Suffix = "daily"
+Latest = true
+SkipTest = false
+Daily = true
+
+[[Images]]
+Name = "zeekozhu/aspnetcore-node:alpine"
+Tag = "zeekozhu/aspnetcore-node"
+TestImage = "zeekozhu/aspnetcore-node:tmp-alpine"
+Dotnet = "{{AspNetCoreVersion}}"
+Node = "v{{NodeVersion}}"
+Yarn = "{{YarnVersion}}"
+Sdk = false
+Suffix = "alpine-daily"
+Latest = false
+SkipTest = false
+Daily = true
+
+[[Images]]
+Name = "zeekozhu/aspnetcore-build-yarn:alpine"
+Tag = "zeekozhu/aspnetcore-build-yarn"
+TestImage = "zeekozhu/aspnetcore-build-yarn:tmp-alpine"
+Dotnet = "{{SdkVersion}}"
+Node = "v{{NodeVersion}}"
+Yarn = "{{YarnVersion}}"
+Sdk = true
+Suffix = "alpine-daily"
+Latest = false
+SkipTest = false
+Daily = true
+
+[[Images]]
+Name = "zeekozhu/aspnetcore-node-deps"
+Tag = "zeekozhu/aspnetcore-node-deps"
+TestImage = "zeekozhu/aspnetcore-node-deps:tmp"
+Dotnet = "{{AspNetCoreVersion}}"
+Node = "v{{NodeVersion}}"
+Yarn = "{{YarnVersion}}"
+Sdk = false
+Suffix = "daily"
+Latest = false
+SkipTest = true
+Daily = true

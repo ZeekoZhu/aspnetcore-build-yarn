@@ -48,7 +48,7 @@ let dockerCmd (subCmd: string) (args: string list) = runCmd "docker" (subCmd::ar
 
 let runGitCmd command =
     let (success, stdout, stderr) = Git.CommandHelper.runGitCommand "./" command
-    if success then stdout |> List.head
+    if success then String.Join ("\n", stdout)
     else failwith stderr
 
 let getLatestTag () =
@@ -67,6 +67,18 @@ let handleCli<'t> (args: seq<string>) (fn: 't -> unit) =
         failwithf "Invalid: %A, Errors: %A" args notParsed.Errors
     | _ -> failwith "Invalid parser result"
 
+let gitPush () =
+    let gitUsr = Environment.environVar "GITHUB_USER"
+    let gitToken = Environment.environVar "GITHUB_TOKEN"
+    runCmd "git" ["push"; sprintf "https://%s:%s@github.com/ZeekoZhu/aspnetcore-build-yarn" gitUsr gitToken; "HEAD:daily"]
+
+let checkTemplateUpdate () =
+    let changed =
+        runGitCmd "diff --name-only HEAD~1"
+    Trace.trace changed
+    changed.Contains "daily-template/"
+
+
 // ----------------------
 // Command Line Interface
 // ----------------------
@@ -77,7 +89,7 @@ module Docker =
         { [<Option('t', Required = true)>] Tag: string
           [<Option('f', Required = true)>] Dockerfile: string
           [<Option('c', Required = true)>] ContextPath: string
-          [<Option('v', Required = true)>] Version: string
+          [<Option('s', "spec", Required = true)>] Spec: string
         }
 
     let build (options: BuildOptions) =
@@ -96,14 +108,15 @@ module Docker =
           Latest: bool
           SkipTest: bool
           Tag: string
+          Daily: bool
         }
 
     [<CLIMutable>]
     type ImageSpec =
         { Images: ImageSpecItem [] }
 
-    let getBuildParams (version: string) (name: string) =
-        let spec = Toml.ReadFile<ImageSpec>(sprintf "./%s.spec.toml" version)
+    let getBuildParams (specFile: string) (name: string) =
+        let spec = Toml.ReadFile<ImageSpec>(specFile)
         spec.Images |> Seq.find (fun x -> x.Name = name)
 
     let testImage () =
@@ -164,12 +177,13 @@ module Docker =
         let version = SemVer.parse spec.Dotnet
         let major = string version.Major
         let minor = major + "." + string version.Minor
-        let patch = minor + "." + string version.Patch
+        let patch = version.Original.Value
         seq {
-            yield major
-            yield minor
+            if not spec.Daily then
+                yield major
+                yield minor
+                if spec.Latest then yield "latest"
             yield patch
-            if spec.Latest then yield "latest"
         }
         |> Seq.map (fun t ->
              let tag = spec.Tag + ":" + t
@@ -181,6 +195,12 @@ module Docker =
             dockerCmd "tag" [ spec.TestImage; t ]
             dockerCmd "push" [ t ]
            )
+    
+    let ciBuild (p: BuildOptions) =
+        let buildParams = getBuildParams p.Spec p.Tag
+        let buildOptions = { p with Tag = buildParams.TestImage }
+        build buildOptions
+        FakeVar.set BuildParams buildParams
 
 module BuildInfo =
     open FSharp.Control.Tasks.V2
@@ -202,6 +222,11 @@ module BuildInfo =
         let checksum = checksumRegex.Matches(str).[0].Groups.[1].Value
         version, checksum
 
+    let parseYanrInfo downloadPage =
+        let versionRegex = Regex("""releases\/tag\/v(?<version>[0-9.]+)""", RegexOptions.Multiline)
+        let version = (versionRegex.Match(downloadPage).Groups.Item "version").Value
+        version
+
     let parseNodejsInfo downloadPage =
         let versionRegex = Regex("""<strong>(.+)<\/strong>""", RegexOptions.Multiline)
         let version = versionRegex.Matches(downloadPage).[0].Groups.[1].Value
@@ -212,24 +237,56 @@ module BuildInfo =
         let checksumRegex = Regex("""^(\w+)\s+node-v.+linux-x64\.tar\.gz$""", RegexOptions.Multiline)
         let checksum = checksumRegex.Matches(checksums).[0].Groups.[1].Value
         version, checksum
+    
+    let getSdkInfoAsync version =
+        task {
+            let! resp = httpClient.GetStringAsync(sprintf "https://raw.githubusercontent.com/dotnet/dotnet-docker/master/%s/sdk/alpine3.9/amd64/Dockerfile" version)
+            return (parseDotnetSdkInfo resp)
+        } |> Async.AwaitTask
+    
+    let getRuntimeInfoAsync version =
+        task {
+            let! resp = httpClient.GetStringAsync(sprintf "https://raw.githubusercontent.com/dotnet/dotnet-docker/master/%s/aspnet/alpine3.9/amd64/Dockerfile" version)
+            let result = (parseAspNetInfo resp)
+            return result
+        } |> Async.AwaitTask
+
+    let getNodeJsInfoAsync () =
+        task {
+            let! resp = httpClient.GetStringAsync("https://nodejs.org/en/download/current/")
+            let result = (parseNodejsInfo resp)
+            return result
+        } |> Async.AwaitTask
+
+    let getYarnInfoAsync () =
+        task {
+            let! resp = httpClient.GetStringAsync("https://yarnpkg.com/en")
+            return parseYanrInfo resp
+        } |> Async.AwaitTask
 
     let getDepsInfo (options: BuildInfoOptions) =
         let sdkInfoTask version =
             task {
-                let! resp = httpClient.GetStringAsync(sprintf "https://raw.githubusercontent.com/dotnet/dotnet-docker/master/%s/sdk/alpine3.9/amd64/Dockerfile" version)
-                let result = "Dotnet SDK", (parseDotnetSdkInfo resp)
+                let! resp = getSdkInfoAsync version
+                let result = "Dotnet SDK", resp
                 return result
             } |> Async.AwaitTask
         let runtimeTask version =
             task {
-                let! resp = httpClient.GetStringAsync(sprintf "https://raw.githubusercontent.com/dotnet/dotnet-docker/master/%s/aspnet/alpine3.9/amd64/Dockerfile" version)
-                let result = "AspNetCore Runtime", (parseAspNetInfo resp)
+                let! resp = getRuntimeInfoAsync version
+                let result = "AspNetCore Runtime", resp
                 return result
             } |> Async.AwaitTask
         let nodejsTask =
             task {
-                let! resp = httpClient.GetStringAsync("https://nodejs.org/en/download/current/")
-                let result = "Node.js", (parseNodejsInfo resp)
+                let! resp = getNodeJsInfoAsync ()
+                let result = "Node.js", resp
+                return result
+            } |> Async.AwaitTask
+        let yarnTask =
+            task {
+                let! resp = getYarnInfoAsync ()
+                let result = "Yarn", (resp, "N/A")
                 return result
             } |> Async.AwaitTask
         let tasks =
@@ -238,6 +295,7 @@ module BuildInfo =
                     yield sdkInfoTask v
                     yield runtimeTask v
                 yield nodejsTask
+                yield yarnTask
             }
         Async.Parallel tasks
         |> Async.RunSynchronously
@@ -246,22 +304,132 @@ module BuildInfo =
             )
 
 
+module DailyBuild =
+    open BuildInfo
+    open Fake.IO
+    open Fake.IO.FileSystemOperators
+    open Fake.IO.Globbing.Operators
+    [<CLIMutable>]
+    type DailyBuildInfo =
+        { NodeVersion: string
+          YarnVersion: string
+          NodeSHA: string
+          DepsVersion: string
+          AspNetCoreVersion: string
+          AspNetCoreSHA: string
+          AspNetImage: string
+          SdkVersion: string
+          SdkSHA: string
+          SdkImage: string
+          FetchTime: string
+        }
+    module Templating =
+        let getAllTemplates () =
+            !! "daily-template/**/*"
+        let templatingFile (info: DailyBuildInfo) template =
+            info.GetType()
+                .GetProperties()
+            |> Seq.map (fun prop -> prop.Name, (prop.GetValue(info) :?> string))
+            |> Seq.fold ( fun (templ: string) (propName, value) ->
+                templ.Replace( (sprintf "{{%s}}" propName), value)
+            ) template
+        let renderAllTemplates dotnetVersion info =
+            for templ in getAllTemplates () do
+                let content = File.ReadAllText templ
+                let rendered = templatingFile info content
+                let outputPath = templ.Replace("daily-template", "daily" </> dotnetVersion)
+                Directory.ensure (Directory.GetParent(outputPath).FullName)
+                File.WriteAllText (outputPath, rendered)
+
+    let getDailyBuildInfo (dotnetVersion) =
+        async {
+            let! (nodeVersion, nodeSha) = getNodeJsInfoAsync ()
+            let! (sdkVersion, sdkSha) = getSdkInfoAsync (dotnetVersion)
+            let! (aspnetVersion, aspnetSha) = getRuntimeInfoAsync (dotnetVersion)
+            let! yarnVersion = getYarnInfoAsync ()
+            let depsVersion = aspnetVersion + "-daily"
+            let aspnetImage = dotnetVersion
+            let sdkImage = dotnetVersion
+            return
+                { NodeVersion = nodeVersion
+                  YarnVersion = yarnVersion
+                  NodeSHA = nodeSha
+                  DepsVersion = depsVersion
+                  AspNetCoreVersion = aspnetVersion
+                  AspNetCoreSHA = aspnetSha
+                  AspNetImage = aspnetImage
+                  SdkSHA = sdkSha
+                  SdkVersion = sdkVersion
+                  SdkImage = sdkImage
+                  FetchTime = DateTime.Now.ToString("O")
+                }
+        }
+
+    let trackingVersions =
+        File.ReadAllLines("./tracking-versions.txt")
+        |> Seq.filter (fun x -> (not (String.isNullOrWhiteSpace x)))
+
+    let getAllDailyBuildInfo () =
+        let versions =
+            File.ReadAllLines("./tracking-versions.txt")
+            |> Seq.filter (fun x -> (not (String.isNullOrWhiteSpace x)))
+        for version in versions do
+            let infoFile = "daily" </> version </> "daily-build-info.toml"
+            
+            let info =
+                getDailyBuildInfo version |> Async.RunSynchronously
+            let previousInfo =
+                { (File.readAsString infoFile
+                    |> Toml.ReadString<DailyBuildInfo>)
+                    with
+                        FetchTime = info.FetchTime
+                }
+            Directory.ensure ("daily" </> version)
+            if info = previousInfo then
+                let skip = FakeVar.getOrFail<string list> "SkipVersions"
+                FakeVar.set "SkipVersions" (version::skip)
+            File.writeString false (infoFile) (Nett.Toml.WriteString info)
+            Templating.renderAllTemplates version info
+
+    let buildDailyImages (dotnetVersion) =
+        let convertVersionedString (str: string) version =
+            str.Replace("%s", version)
+        let convertCmd (cmd: string) =
+            cmd.Split([|' '|])
+            |> Array.toList
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-build-yarn -f daily/%s/sdk/Dockerfile -c ./daily/%s/sdk -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-build-yarn:chromium -f daily/%s/sdk/chromium.Dockerfile -c ./daily/%s/sdk -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-node -f daily/%s/runtime/Dockerfile -c ./daily/%s/runtime -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-node-deps -f daily/%s/deps/Dockerfile -c ./daily/%s/deps -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-node:alpine -f daily/%s/runtime/alpine.Dockerfile -c ./daily/%s/runtime -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
+        Target.run 1 "CI" (convertVersionedString "-t zeekozhu/aspnetcore-build-yarn:alpine -f daily/%s/sdk/alpine.Dockerfile -c ./daily/%s/sdk -s ./daily/%s/daily.spec.toml" dotnetVersion |> convertCmd)
+
+    let buildAllDailyImages () =
+        let skip = FakeVar.getOrFail<string list> "SkipVersions"
+        trackingVersions
+        |> Seq.except skip
+        |> Seq.iter buildDailyImages
+    
+    let commitChanges () =
+        let skip = FakeVar.getOrFail<string list> "SkipVersions"
+        let skipCommit =
+            trackingVersions
+            |> Seq.except skip
+            |> Seq.isEmpty
+        if not skipCommit then
+            let now = DateTime.Now.ToString("O")
+            runCmd "git" ["add"; "."]
+            runCmd "git" ["commit"; "-m"; "DailyBuild: " + now]
+            gitPush ()
+        else ()
 
 // ----------------------
 // Targets
 // ----------------------
 
-
- 
-let ciBuild (p: Docker.BuildOptions) =
-    let buildParams = Docker.getBuildParams p.Version p.Tag
-    let buildOptions = { p with Tag = buildParams.TestImage }
-    Docker.build buildOptions
-    FakeVar.set BuildParams buildParams
-
 Target.useTriggerCI ()
 
-Target.create "CI:Build" (fun p -> handleCli p.Context.Arguments ciBuild)
+Target.create "CI:Build" (fun p -> handleCli p.Context.Arguments Docker.ciBuild)
 
 Target.create "CI:Test" (fun _ -> Docker.testImage())
 
@@ -274,6 +442,28 @@ Target.create "update:info" (fun p ->
 Target.create "CI" ignore
 
 "CI:Build" ==> "CI:Test" ==> "CI:Publish" ==> "CI"
+
+Target.create "daily:prepare" (fun _ ->
+    FakeVar.set "SkipVersions" List.empty<string>
+    DailyBuild.getAllDailyBuildInfo ()
+    if checkTemplateUpdate() then
+        FakeVar.set "SkipVersions" List.empty<string>
+    FakeVar.getOrFail<string list> "SkipVersions"
+    |> Seq.iter (Trace.tracefn "%s is up to date, will be skipped")
+)
+
+Target.create "daily:build" ( fun _ -> 
+    DailyBuild.buildAllDailyImages ()
+)
+
+Target.create "daily:commit" ( fun _ ->
+    DailyBuild.commitChanges ()
+)
+
+Target.create "daily" ignore
+
+"daily:prepare" ==> "daily:build"
+    ==> "daily:commit" ==> "daily"
 
 Target.create "Empty" ignore
 
