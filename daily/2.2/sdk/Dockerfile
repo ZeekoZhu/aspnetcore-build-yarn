@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2.301
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2.401
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80 \
@@ -14,9 +14,9 @@ ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     PATH="/root/.dotnet/tools:${PATH}"
 
 # set up node
-ENV NODE_VERSION 12.6.0
+ENV NODE_VERSION 12.7.0
 ENV YARN_VERSION 1.17.3
-ENV NODE_DOWNLOAD_SHA ed54fb02a3e9544d9b86a1afbb526b429ae565214d54275c3c5cbfc5e5ea4691
+ENV NODE_DOWNLOAD_SHA bc232791d839dd2159173ebedfdc22376e582a5f51a546e0f01de7182720e174
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 
 RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
