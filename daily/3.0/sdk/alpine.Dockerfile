@@ -1,4 +1,4 @@
-FROM zeekozhu/aspnetcore-node-deps:3.0.0-preview8.19405.7
+FROM zeekozhu/aspnetcore-node-deps:3.0.0-preview9.19424.4
 
 
 # Copy and paste from https://github.com/dotnet/dotnet-docker/blob/master/2.2/sdk/alpine3.8/amd64/Dockerfile
@@ -14,10 +14,10 @@ ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     PATH="/root/.dotnet/tools:${PATH}"
 
 # Install .NET Core SDK
-ENV DOTNET_SDK_VERSION 3.0.100-preview8-013656
+ENV DOTNET_SDK_VERSION 3.0.100-preview9-014004
 
 RUN wget -O dotnet.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION/dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-x64.tar.gz \
-    && dotnet_sha512='eaec220589c980d0d3e8915673de967426b5202255489c00dc76ed03f7c4fab57abbcb9c5eadc50896127551f42743b0e2eb8b9cd90d9ff09afda12e94e1009e' \
+    && dotnet_sha512='14ab8879e98c16547355d5a7bc67093dda3d8716eedc687a64318fc014dd6ad7998257b68afe2bfc7b2368ca106ab262cd9c001155a7f2e49159d5d3bff76563' \
     && echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet \
     && tar -C /usr/share/dotnet -xzf dotnet.tar.gz \
