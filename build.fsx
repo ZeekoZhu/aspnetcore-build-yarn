@@ -70,7 +70,7 @@ let handleCli<'t> (args: seq<string>) (fn: 't -> unit) =
 let gitPush () =
     let gitUsr = Environment.environVar "GITHUB_USER"
     let gitToken = Environment.environVar "GITHUB_TOKEN"
-    let branch = runGitCmd "branch --show-current"
+    let branch = Environment.environVar "TRAVIS_BRANCH"
     runCmd "git" ["push"; sprintf "https://%s:%s@github.com/ZeekoZhu/aspnetcore-build-yarn" gitUsr gitToken; sprintf "HEAD:%s" branch ]
 
 let checkTemplateUpdate () =
