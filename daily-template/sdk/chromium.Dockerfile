@@ -33,6 +33,8 @@ RUN apt-get -qq update \
     && rm -rf /var/lib/apt/lists/*
 
 # Trigger first run experience by running arbitrary cmd to populate local package cache
-RUN dotnet help
+RUN dotnet help \
+    && dotnet tool install -g fake-cli \
+    && dotnet tool install -g paket
 
 WORKDIR /

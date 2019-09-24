@@ -27,6 +27,8 @@ RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 # Trigger first run experience by running arbitrary cmd to populate local package cache
-RUN dotnet help
+RUN dotnet help \
+    && dotnet tool install -g fake-cli \
+    && dotnet tool install -g paket
 
 WORKDIR /
