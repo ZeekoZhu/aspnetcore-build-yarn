@@ -16,5 +16,5 @@ Official aspnetcore runtime docker image with nodejs preinstalled.
 
 This project use travis CI to create daily build ensure all dependencies are update to date with upstream. More details can be found in specifications:
 
-- [2.2.spec.toml](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/2.2.spec.toml)
-- [3.0.spec.toml](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/3.0.spec.toml)
+- [2.2.spec.toml](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/daily/2.2/daily.spec.toml)
+- [3.0.spec.toml](https://github.com/ZeekoZhu/aspnetcore-build-yarn/blob/master/daily/3.0/daily.spec.toml)
