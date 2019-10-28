@@ -3,7 +3,7 @@ FROM zeekozhu/aspnetcore-node-deps:3.0.0
 
 # Copy and paste from https://github.com/dotnet/dotnet-docker/blob/master/2.2/sdk/alpine3.8/amd64/Dockerfile
 # Disable the invariant mode (set in base image)
-RUN apk add --no-cache icu-libs
+RUN apk add --no-cache icu-libs alpine-sdk
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LC_ALL=en_US.UTF-8 \

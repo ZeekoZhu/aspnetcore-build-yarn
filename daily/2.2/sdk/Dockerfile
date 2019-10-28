@@ -13,6 +13,10 @@ ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     FAKE_DETAILED_ERRORS=true \
     PATH="/root/.dotnet/tools:${PATH}"
 
+RUN apt-get -qq update \
+    && apt-get install -y build-essential --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
 # set up node
 ENV NODE_VERSION 13.0.1
 ENV YARN_VERSION 1.19.1
