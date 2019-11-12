@@ -241,13 +241,13 @@ module BuildInfo =
     
     let getSdkInfoAsync version =
         task {
-            let! resp = httpClient.GetStringAsync(sprintf "https://raw.githubusercontent.com/dotnet/dotnet-docker/master/%s/sdk/alpine3.9/amd64/Dockerfile" version)
+            let! resp = httpClient.GetStringAsync(sprintf "https://raw.githubusercontent.com/dotnet/dotnet-docker/master/%s/sdk/alpine3.10/amd64/Dockerfile" version)
             return (parseDotnetSdkInfo resp)
         } |> Async.AwaitTask
     
     let getRuntimeInfoAsync version =
         task {
-            let! resp = httpClient.GetStringAsync(sprintf "https://raw.githubusercontent.com/dotnet/dotnet-docker/master/%s/aspnet/alpine3.9/amd64/Dockerfile" version)
+            let! resp = httpClient.GetStringAsync(sprintf "https://raw.githubusercontent.com/dotnet/dotnet-docker/master/%s/aspnet/alpine3.10/amd64/Dockerfile" version)
             let result = (parseAspNetInfo resp)
             return result
         } |> Async.AwaitTask
