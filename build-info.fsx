@@ -20,6 +20,9 @@ module DotNetRelease =
             FileHash: string
         }
     type ReleaseChannelIndex = JsonProvider<"./sample-release.json">
+    let parseImageVersion str =
+        let regex = Regex("""\d+\.\d+\.\d+(-\w+)?""")
+        (regex.Match(str)).Value
     let getIndex (version: string) =
         async {
             let! releaseInfo = ReleaseChannelIndex.AsyncLoad (sprintf "https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/%s/releases.json" version)
@@ -78,12 +81,6 @@ let getImageVersion (tagListUrl: string) version =
     }
     |> Async.AwaitTask
 
-let getSdkImage =
-    getImageVersion "https://mcr.microsoft.com/v2/dotnet/core/sdk/tags/list"
-
-let getAspNetImage =
-    getImageVersion "https://mcr.microsoft.com/v2/dotnet/core/aspnet/tags/list"
-
 let getNodeJsInfoAsync () =
     task {
         let! resp = httpClient.GetStringAsync("https://nodejs.org/en/download/current/")
@@ -98,13 +95,15 @@ let getYarnInfoAsync () =
     } |> Async.AwaitTask
 
 let getDepsInfo (options: BuildInfoOptions) =
-    let dotnetInfo version isSdk =
+    let dotnetInfo version =
         async {
             let! (sdk, aspnetcore) = DotNetRelease.getIndex version
-            if isSdk then
-                return "DotNet SDK", (sdk.Version, sdk.FileHash)
-            else
-                return "AspNetCore Runtime", (aspnetcore.Version, aspnetcore.FileHash)
+            return seq {
+                yield "DotNet SDK", (sdk.Version, sdk.FileHash)
+                yield "AspNetCore Runtime", (aspnetcore.Version, aspnetcore.FileHash)
+                yield "SDK Image", (DotNetRelease.parseImageVersion sdk.Version, "N/A")
+                yield "AspNetCore Runtime Image", (DotNetRelease.parseImageVersion aspnetcore.Version, "N/A")
+            }
         }
     let nodejsTask =
         async {
@@ -118,28 +117,18 @@ let getDepsInfo (options: BuildInfoOptions) =
             let result = "Yarn", (resp, "N/A")
             return result
         }
-    let aspnetImageTask version =
-        async {
-            let! resp = getAspNetImage version
-            return "AspNetCore Image", (resp, "N/A")
-        }
-    let sdkImageVersion version =
-        async {
-            let! resp = getSdkImage version
-            return "SDK Image", (resp, "N/A")
-        }
+    let printVersionInfo = (fun (name, (version, checksum)) ->
+            Trace.logfn "%s:\nVersion: %s\nChecksum: %s\n" name version checksum
+        )
     let tasks =
         seq {
-            for v in options.DotnetVersions do
-                yield aspnetImageTask v
-                yield sdkImageVersion v
-                yield dotnetInfo v true
-                yield dotnetInfo v false
             yield nodejsTask
             yield yarnTask
         }
     Async.Parallel tasks
     |> Async.RunSynchronously
-    |> Seq.iter (fun (name, (version, checksum)) ->
-            Trace.logfn "%s:\nVersion: %s\nChecksum: %s\n" name version checksum
-        )
+    |> Seq.iter printVersionInfo
+    for v in options.DotnetVersions do
+        dotnetInfo v
+        |> Async.RunSynchronously
+        |> Seq.iter printVersionInfo

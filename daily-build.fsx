@@ -59,8 +59,8 @@ let getDailyBuildInfo (dotnetVersion) =
         // let! (aspnetVersion, aspnetSha) = getRuntimeInfoAsync (dotnetVersion)
         let! yarnVersion = getYarnInfoAsync ()
         let depsVersion = aspnet.Version
-        let! aspnetImage = getAspNetImage dotnetVersion
-        let! sdkImage = getSdkImage dotnetVersion
+        let aspnetImage = DotNetRelease.parseImageVersion aspnet.Version
+        let sdkImage = DotNetRelease.parseImageVersion sdk.Version
         return
             { NodeVersion = nodeVersion
               YarnVersion = yarnVersion
