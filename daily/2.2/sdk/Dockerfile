@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2.402
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2.207
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80 \
@@ -18,9 +18,9 @@ RUN apt-get -qq update \
     && rm -rf /var/lib/apt/lists/*
 
 # set up node
-ENV NODE_VERSION 13.1.0
-ENV YARN_VERSION 1.19.1
-ENV NODE_DOWNLOAD_SHA 490e998198e152450e79bb65178813ce0c81708954697f91cfd82537acfcb588
+ENV NODE_VERSION 13.2.0
+ENV YARN_VERSION 1.19.2
+ENV NODE_DOWNLOAD_SHA dcf3954ecf6a34d65cab277d3565c654996b1d3e6d07cbbd98939cee0792c668
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 
 RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
