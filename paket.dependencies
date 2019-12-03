@@ -9,3 +9,4 @@ group Build
     nuget Nett 0.10.1
     nuget MyFakeTools 0.0.14
     nuget TaskBuilder.fs
+    nuget FSharp.Data

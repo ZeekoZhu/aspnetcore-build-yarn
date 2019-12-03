@@ -54,10 +54,11 @@ module Templating =
 let getDailyBuildInfo (dotnetVersion) =
     async {
         let! (nodeVersion, nodeSha) = getNodeJsInfoAsync ()
-        let! (sdkVersion, sdkSha) = getSdkInfoAsync (dotnetVersion)
-        let! (aspnetVersion, aspnetSha) = getRuntimeInfoAsync (dotnetVersion)
+        let! (sdk, aspnet) = DotNetRelease.getIndex dotnetVersion
+        // let! (sdkVersion, sdkSha) = getSdkInfoAsync (dotnetVersion)
+        // let! (aspnetVersion, aspnetSha) = getRuntimeInfoAsync (dotnetVersion)
         let! yarnVersion = getYarnInfoAsync ()
-        let depsVersion = aspnetVersion
+        let depsVersion = aspnet.Version
         let! aspnetImage = getAspNetImage dotnetVersion
         let! sdkImage = getSdkImage dotnetVersion
         return
@@ -65,11 +66,11 @@ let getDailyBuildInfo (dotnetVersion) =
               YarnVersion = yarnVersion
               NodeSHA = nodeSha
               DepsVersion = depsVersion
-              AspNetCoreVersion = aspnetVersion
-              AspNetCoreSHA = aspnetSha
+              AspNetCoreVersion = aspnet.Version
+              AspNetCoreSHA = aspnet.FileHash
               AspNetImage = aspnetImage
-              SdkSHA = sdkSha
-              SdkVersion = sdkVersion
+              SdkSHA = sdk.FileHash
+              SdkVersion = sdk.Version
               SdkImage = sdkImage
               FetchTime = DateTime.Now.ToString("O")
             }
