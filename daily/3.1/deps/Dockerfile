@@ -1,4 +1,4 @@
-FROM node:13.2.0-alpine
+FROM node:12.13.1-alpine
 
 ENV YARN_VERSION 1.19.2
 

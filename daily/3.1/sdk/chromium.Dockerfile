@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.100-preview3
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1.100
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80 \
@@ -15,9 +15,9 @@ ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     CHROME_BIN=/usr/bin/chromium
 
 # set up node
-ENV NODE_VERSION 13.2.0
+ENV NODE_VERSION 12.13.1
 ENV YARN_VERSION 1.19.2
-ENV NODE_DOWNLOAD_SHA dcf3954ecf6a34d65cab277d3565c654996b1d3e6d07cbbd98939cee0792c668
+ENV NODE_DOWNLOAD_SHA 074a6129da34b768b791f39e8b74c6e4ab3349d1296f1a303ef3547a7f9cf9be
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 
 RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
