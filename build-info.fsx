@@ -83,7 +83,7 @@ let getImageVersion (tagListUrl: string) version =
 
 let getNodeJsInfoAsync () =
     task {
-        let! resp = httpClient.GetStringAsync("https://nodejs.org/en/download/current/")
+        let! resp = httpClient.GetStringAsync("https://nodejs.org/en/download/")
         let result = (parseNodejsInfo resp)
         return result
     } |> Async.AwaitTask
