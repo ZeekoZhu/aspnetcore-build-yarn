@@ -1,4 +1,5 @@
 module BuildInfo
+open AngleSharp
 
 #load ".fake/build.fsx/intellisense.fsx"
 #if !FAKE
@@ -12,6 +13,8 @@ open FSharp.Data
 open System.Net.Http
 
 let httpClient = new HttpClient()
+
+let browserCtx = BrowsingContext.New (Configuration.Default)
 
 module DotNetRelease =
     type DotNetVersionInfo =
@@ -51,9 +54,12 @@ type BuildInfoOptions =
     }
 
 let parseYanrInfo downloadPage =
-    let versionRegex = Regex("""releases\/tag\/v(?<version>[0-9.]+)""", RegexOptions.Multiline)
-    let version = (versionRegex.Match(downloadPage).Groups.Item "version").Value
-    version
+    task {
+        let! doc = browserCtx.OpenAsync (fun req -> req.Content(downloadPage) |> ignore)
+        return doc.QuerySelector(".navbar-text").TextContent.Trim().TrimStart('v')
+    }
+    |> Async.AwaitTask
+    |> Async.RunSynchronously
 
 let parseNodejsInfo downloadPage =
     let versionRegex = Regex("""<strong>(.+)<\/strong>""", RegexOptions.Multiline)
