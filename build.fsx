@@ -155,25 +155,8 @@ module Docker =
             |> List.iter (fun (item, actual, expected) -> checkVersion item expected actual)
 
 
-    let login () =
-        let dockerPwd = Environment.environVar "DOCKER_PASSWORD"
-        let dockerUsr = Environment.environVar "DOCKER_USERNAME"
-        let input = StreamRef.Empty
-        
-        let proc =
-            CreateProcess.fromRawCommand
-                "docker" [ "login"; "-u"; dockerUsr; "--password-stdin" ]
-            |> CreateProcess.withStandardInput (CreatePipe input)
-            |> showOutput
-            |> Proc.start
-        use inputWriter = new StreamWriter(input.Value)
-        inputWriter.WriteLine dockerPwd
-        inputWriter.Close()
-        proc.Wait()
-
     let publishImage () =
         let spec = FakeVar.getOrFail<ImageSpecItem> BuildParams
-        login ()
         let version = SemVer.parse spec.Dotnet
         let major = string version.Major
         let minor = major + "." + string version.Minor
