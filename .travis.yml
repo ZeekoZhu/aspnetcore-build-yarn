@@ -2,13 +2,16 @@ sudo: required
 language: csharp
 mono: none
 dist: xenial
-dotnet: 3.0
+dotnet: 3.1
 
 env:
   - FAKE_DETAILED_ERRORS=true
 
 services:
   - docker
+
+before_install:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 jobs:
   include:
