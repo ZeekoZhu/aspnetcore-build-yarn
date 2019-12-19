@@ -18,9 +18,9 @@ RUN apt-get -qq update \
     && rm -rf /var/lib/apt/lists/*
 
 # set up node
-ENV NODE_VERSION 12.13.1
+ENV NODE_VERSION 12.14.0
 ENV YARN_VERSION 1.21.1
-ENV NODE_DOWNLOAD_SHA 074a6129da34b768b791f39e8b74c6e4ab3349d1296f1a303ef3547a7f9cf9be
+ENV NODE_DOWNLOAD_SHA 52207f643ab0fba66d5189a51aac280c4834c81f24a7297446896386ec93a5ed
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 
 RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
