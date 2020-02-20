@@ -4,9 +4,9 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:2.2.8
 ENV ASPNETCORE_URLS http://+:80
 
 # set up node
-ENV NODE_VERSION 12.16.0
+ENV NODE_VERSION 12.16.1
 ENV YARN_VERSION 1.22.0
-ENV NODE_DOWNLOAD_SHA fe8eca839b702f1ca47e9aabfd833cfa3e68952450d1f4c893cdfb0650ecd3c2
+ENV NODE_DOWNLOAD_SHA b2d9787da97d6c0d5cbf24c69fdbbf376b19089f921432c5a61aa323bc070bea
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 
 RUN curl -SL "$NODE_DOWNLOAD_URL" --output nodejs.tar.gz \
