@@ -12,9 +12,10 @@ services:
 
 before_install:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - dotnet tool restore
 
 jobs:
   include:
     # daily
     - stage: build daily images
-      script: ./fake.sh build -t daily
+      script: dotnet fake build -t daily
