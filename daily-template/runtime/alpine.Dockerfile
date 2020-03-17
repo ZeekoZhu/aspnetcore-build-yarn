@@ -17,4 +17,4 @@ RUN wget -O aspnetcore.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/asp
     && echo "$aspnetcore_sha512  aspnetcore.tar.gz" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet \
     && tar -zxf aspnetcore.tar.gz -C /usr/share/dotnet ./shared/Microsoft.AspNetCore.App \
-    && rm aspnetcore.tar.gz \
+    && rm aspnetcore.tar.gz

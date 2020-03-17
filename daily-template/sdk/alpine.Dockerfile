@@ -11,7 +11,7 @@ ENV \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
     # Skip extraction of XML docs - generally not useful within an image/container - helps performance
-    NUGET_XMLDOC_MODE=skip \
+    NUGET_XMLDOC_MODE=skip
 
 RUN apk add --no-cache icu-libs alpine-sdk
 
