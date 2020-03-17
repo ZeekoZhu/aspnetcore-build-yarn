@@ -1,8 +1,8 @@
 FROM zeekozhu/aspnetcore-node-deps:{{DepsVersion}}
 
 # Install ASP.NET Core
-ENV ASPNETCORE_VERSION {{AspNetCoreVersion}} \
-    DOTNET_VERSION {{RuntimeVersion}}
+ENV ASPNETCORE_VERSION={{AspNetCoreVersion}} \
+    DOTNET_VERSION={{RuntimeVersion}}
 
 RUN wget -O dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET_VERSION/dotnet-runtime-$DOTNET_VERSION-linux-musl-x64.tar.gz \
     && dotnet_sha512='{{RuntimeSHA}}' \
