@@ -22,7 +22,13 @@ module DotNetRelease =
             Version: string
             FileHash: string
         }
-    type ReleaseChannelIndex = JsonProvider<"./sample-release.json">
+    type DotNetRelease =
+        { Sdk: DotNetVersionInfo
+          Runtime: DotNetVersionInfo
+          AspNetCore: DotNetVersionInfo
+        }
+
+    type ReleaseChannelIndex = JsonProvider<Sample = "./sample-release.json", InferTypesFromValues = false>
     let parseImageVersion str =
         let regex = Regex("""\d+\.\d+\.\d+(-\w+)?""")
         (regex.Match(str)).Value
@@ -32,20 +38,22 @@ module DotNetRelease =
             let latestRelease =
                 releaseInfo.Releases
                 |> Seq.maxBy (fun x -> x.ReleaseDate)
-            let findFileHash (arr: ReleaseChannelIndex.File2 array) =
+            let findFileHash (arr: ReleaseChannelIndex.File array) =
                 arr
-                |> Seq.find (fun x ->
-                    match x.Rid with
-                    | Some rid when rid = "linux-musl-x64" -> true
-                    | _ -> false
-                    )
+                |> Seq.find (fun x -> x.Rid = "linux-musl-x64")
             let sdk: DotNetVersionInfo =
-                { Version = latestRelease.Sdk.Version.String.Value; FileHash = (findFileHash latestRelease.Sdk.Files).Hash }
-            let aspnetcoreRt: DotNetVersionInfo =
-                { Version = latestRelease.AspnetcoreRuntime.Value.Version.String.Value;
-                  FileHash = (findFileHash latestRelease.AspnetcoreRuntime.Value.Files).Hash
+                { Version = latestRelease.Sdk.Version
+                  FileHash = (findFileHash latestRelease.Sdk.Files).Hash
                 }
-            return sdk, aspnetcoreRt
+            let aspnetcoreRt: DotNetVersionInfo =
+                { Version = latestRelease.AspnetcoreRuntime.Version;
+                  FileHash = (findFileHash latestRelease.AspnetcoreRuntime.Files).Hash
+                }
+            let runtime: DotNetVersionInfo =
+                { Version = latestRelease.Runtime.Version
+                  FileHash = (findFileHash latestRelease.Runtime.Files).Hash
+                }
+            return { Sdk = sdk; Runtime = runtime; AspNetCore = aspnetcoreRt }
         }
 
 [<NoComparison>]
@@ -72,21 +80,6 @@ let parseNodejsInfo downloadPage =
     let checksum = checksumRegex.Matches(checksums).[0].Groups.[1].Value
     version, checksum
 
-let getImageVersion (tagListUrl: string) version =
-    let versionPattern = @"""" + Regex.Escape(version) + @"\.\d+(?:-preview\d?)?"""
-    let regex = Regex(versionPattern)
-    task {
-        let! resp = httpClient.GetStringAsync(tagListUrl)
-        let result =
-            seq {
-                for _match in regex.Matches(resp) do
-                    yield _match.Value.Trim([|'"'|]) |> SemVer.parse
-            }
-            |> Seq.max
-        return result.AsString
-    }
-    |> Async.AwaitTask
-
 let getNodeJsInfoAsync () =
     task {
         let! resp = httpClient.GetStringAsync("https://nodejs.org/en/download/")
@@ -103,12 +96,13 @@ let getYarnInfoAsync () =
 let getDepsInfo (options: BuildInfoOptions) =
     let dotnetInfo version =
         async {
-            let! (sdk, aspnetcore) = DotNetRelease.getIndex version
+            let! dotnetRelease = DotNetRelease.getIndex version
             return seq {
-                yield "DotNet SDK", (sdk.Version, sdk.FileHash)
-                yield "AspNetCore Runtime", (aspnetcore.Version, aspnetcore.FileHash)
-                yield "SDK Image", (DotNetRelease.parseImageVersion sdk.Version, "N/A")
-                yield "AspNetCore Runtime Image", (DotNetRelease.parseImageVersion aspnetcore.Version, "N/A")
+                sprintf "DotNet SDK: %A" dotnetRelease.Sdk 
+                sprintf "AspNetCore Runtime: %A" dotnetRelease.AspNetCore
+                sprintf "SDK Image: %A" (DotNetRelease.parseImageVersion dotnetRelease.Sdk.Version)
+                sprintf "AspNetCore Runtime Image: %A" (DotNetRelease.parseImageVersion dotnetRelease.AspNetCore.Version)
+                sprintf "Runtime: %A" dotnetRelease.Runtime
             }
         }
     let nodejsTask =
@@ -137,4 +131,4 @@ let getDepsInfo (options: BuildInfoOptions) =
     for v in options.DotnetVersions do
         dotnetInfo v
         |> Async.RunSynchronously
-        |> Seq.iter printVersionInfo
+        |> Seq.iter (Trace.logfn "%s")
