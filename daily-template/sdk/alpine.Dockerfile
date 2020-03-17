@@ -13,7 +13,6 @@ ENV \
     # Skip extraction of XML docs - generally not useful within an image/container - helps performance
     NUGET_XMLDOC_MODE=skip \
 
-# Disable the invariant mode (set in base image)
 RUN apk add --no-cache icu-libs alpine-sdk
 
 ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
