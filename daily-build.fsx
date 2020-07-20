@@ -86,20 +86,21 @@ let trackingVersions =
 
 let getAllDailyBuildInfo () =
     for version in trackingVersions do
+        Directory.ensure ("daily" </> version)
         let infoFile = "daily" </> version </> "daily-build-info.toml"
         
         let info =
             getDailyBuildInfo version |> Async.RunSynchronously
-        let previousInfo =
-            { (File.readAsString infoFile
-                |> Toml.ReadString<DailyBuildInfo>)
-                with
-                    FetchTime = info.FetchTime
-            }
-        Directory.ensure ("daily" </> version)
-        if info = previousInfo then
-            let skip = FakeVar.getOrFail<string list> "SkipVersions"
-            FakeVar.set "SkipVersions" (version::skip)
+        if File.exists infoFile then
+            let previousInfo =
+                { (File.readAsString infoFile
+                    |> Toml.ReadString<DailyBuildInfo>)
+                    with
+                        FetchTime = info.FetchTime
+                }
+            if info = previousInfo then
+                let skip = FakeVar.getOrFail<string list> "SkipVersions"
+                FakeVar.set "SkipVersions" (version::skip)
         File.writeString false (infoFile) (Nett.Toml.WriteString info)
         Templating.renderAllTemplates version info
 
