@@ -53,6 +53,11 @@ module Templating =
             Directory.ensure (Directory.GetParent(outputPath).FullName)
             File.WriteAllText (outputPath, rendered)
 
+let dotnetDockerRepo (dotnetVersion: string) (imgType) imgVersion =
+    if dotnetVersion.StartsWith "5"
+        then sprintf "mcr.microsoft.com/dotnet/%s:%s" imgType imgVersion
+        else sprintf "mcr.microsoft.com/dotnet/core/%s:%s" imgType imgVersion
+
 let getDailyBuildInfo (dotnetVersion) =
     async {
         let! (nodeVersion, nodeSha) = getNodeJsInfoAsync ()
@@ -63,7 +68,9 @@ let getDailyBuildInfo (dotnetVersion) =
         let! yarnVersion = getYarnInfoAsync ()
         let depsVersion = aspnet.Version
         let aspnetImage = DotNetRelease.parseImageVersion aspnet.Version
+        let aspnetImage = dotnetDockerRepo dotnetVersion "aspnet" aspnetImage
         let sdkImage = DotNetRelease.parseImageVersion sdk.Version
+        let sdkImage = dotnetDockerRepo dotnetVersion "sdk" sdkImage
         return
             { NodeVersion = nodeVersion
               YarnVersion = yarnVersion
