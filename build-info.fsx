@@ -30,7 +30,7 @@ module DotNetRelease =
 
     type ReleaseChannelIndex = JsonProvider<Sample = "./sample-release.json", InferTypesFromValues = false>
     let parseImageVersion str =
-        let regex = Regex("""\d+\.\d+\.\d+(-\w+)?""")
+        let regex = Regex("""^\d+\.\d+\.\d+(-\w+(\.\d+)?)?""")
         (regex.Match(str)).Value
     let getIndex (version: string) =
         async {
