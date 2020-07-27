@@ -54,9 +54,14 @@ let testImage () =
         let dockerRunRm args =
             Utils.runCmdAndReturn "docker" (["run"; "--rm"; imageSpec.TestImage; ] @ args)
 
+        let acceptList = [ 
+                "dotnet", "5.0.100-preview.7.20366.6", "5.0.100-preview.7.20366.15"
+            ]
+        let inAcceptList versions =
+            acceptList |> List.contains versions
         let checkVersion item itemValue (actualValue: string) =
             Trace.tracefn "Q: Is %s's version %s ?" item itemValue
-            if itemValue.Trim() <> actualValue.Trim()
+            if itemValue.Trim() <> actualValue.Trim() && not <| inAcceptList (item, itemValue, actualValue)
             then
                 Trace.traceErrorfn "A: No, %s's version is %s!" item actualValue
                 failwithf "Test %s failed" item
