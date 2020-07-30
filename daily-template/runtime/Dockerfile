@@ -9,6 +9,10 @@ ENV YARN_VERSION {{YarnVersion}}
 ENV NODE_DOWNLOAD_SHA {{NodeSHA}}
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 
+RUN apt-get -qq update \
+    && apt-get install -y wget curl --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/
+
 RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
     && echo "$NODE_DOWNLOAD_SHA  nodejs.tar.gz" | sha256sum -c - \
     && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
