@@ -61,7 +61,7 @@ let testImage () =
             acceptList |> List.contains versions
         let checkVersion item itemValue (actualValue: string) =
             Trace.tracefn "Q: Is %s's version %s ?" item itemValue
-            if itemValue.Trim() <> actualValue.Trim() && not <| inAcceptList (item, itemValue, actualValue)
+            if itemValue.Trim() <> actualValue.Trim() && not <| inAcceptList (item, itemValue.Trim(), actualValue.Trim())
             then
                 Trace.traceErrorfn "A: No, %s's version is %s!" item actualValue
                 failwithf "Test %s failed" item
