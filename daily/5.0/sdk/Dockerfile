@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.302
+FROM mcr.microsoft.com/dotnet/sdk:5.0.100-preview.7
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80 \
@@ -11,8 +11,11 @@ ENV ASPNETCORE_URLS http://+:80 \
 
 ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     FAKE_DETAILED_ERRORS=true \
-    PATH="/root/.dotnet/tools:${PATH}" \
-    CHROME_BIN=/usr/bin/chromium
+    PATH="/root/.dotnet/tools:${PATH}"
+
+RUN apt-get -qq update \
+    && apt-get install -y build-essential --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
 # set up node
 ENV NODE_VERSION 12.18.3
@@ -26,11 +29,6 @@ RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
     && rm nodejs.tar.gz \
     && npm i -g yarn@$YARN_VERSION \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs
-
-# Install chromium
-RUN apt-get -qq update \
-    && apt-get install -y chromium build-essential --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
 
 # Trigger first run experience by running arbitrary cmd to populate local package cache
 RUN dotnet help \
