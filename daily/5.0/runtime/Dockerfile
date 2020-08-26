@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0.0-preview.7
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.0-preview.8
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80
