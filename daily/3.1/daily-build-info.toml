@@ -1,5 +1,5 @@
 NodeVersion = "12.18.3"
-YarnVersion = "1.22.4"
+YarnVersion = "1.22.5"
 NodeSHA = "8cdacecc43c35bcfa5474c793b9e7a01835e4171264f7b13f3e57093371872e9"
 DepsVersion = "3.1.7"
 AspNetCoreVersion = "3.1.7"
@@ -10,4 +10,4 @@ SdkSHA = "1356cdfaa6daa275fc4176fa528fe0e741693a5ca9d13f6bf355c3b970077fdce414b6
 SdkImage = "mcr.microsoft.com/dotnet/core/sdk:3.1.401"
 RuntimeVersion = "3.1.7"
 RuntimeSHA = "b982c3f397f40a79b2bbe852083b648dc0c2ee530307127a1b6f5020d32322bd9eecaab9440d729dcaa5c1ce408bf37450411f5a0d83061b2ddc84e4dc043d3c"
-FetchTime = "2020-08-26T14:46:28.0263341+00:00"
+FetchTime = "2020-08-27T14:47:25.3042291+00:00"
