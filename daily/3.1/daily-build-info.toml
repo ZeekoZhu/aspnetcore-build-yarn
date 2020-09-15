@@ -10,4 +10,4 @@ SdkSHA = "30916407ee1f99c0f1398a45aa1a480b6d75c5e42488c877b7879ea68a03de07b29943
 SdkImage = "mcr.microsoft.com/dotnet/core/sdk:3.1.402"
 RuntimeVersion = "3.1.8"
 RuntimeSHA = "6b441b3d658026af0c4ba3d852f4cde5c3a6336c01f0bfb244b1a2619becb44730c2bdb2c0a86b9ef3767660c776e44ce72b9a0e0bcf428b1e9d82c8a7d96267"
-FetchTime = "2020-09-09T14:53:24.4310835+00:00"
+FetchTime = "2020-09-15T14:56:22.5976831+00:00"
