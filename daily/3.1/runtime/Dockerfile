@@ -4,9 +4,9 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.8
 ENV ASPNETCORE_URLS http://+:80
 
 # set up node
-ENV NODE_VERSION 12.18.3
+ENV NODE_VERSION 12.18.4
 ENV YARN_VERSION 1.22.5
-ENV NODE_DOWNLOAD_SHA 8cdacecc43c35bcfa5474c793b9e7a01835e4171264f7b13f3e57093371872e9
+ENV NODE_DOWNLOAD_SHA b1745bf45aab8d92ebb78d6c4f07c66ad770e94ca2cab1b8f31b3cc361143d8e
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 
 RUN apt-get -qq update \
