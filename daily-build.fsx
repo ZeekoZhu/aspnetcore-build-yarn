@@ -53,10 +53,10 @@ module Templating =
             Directory.ensure (Directory.GetParent(outputPath).FullName)
             File.WriteAllText (outputPath, rendered)
 
-let dotnetDockerRepo (dotnetVersion: string) (imgType) imgVersion =
-    if dotnetVersion.StartsWith "5"
-        then sprintf "mcr.microsoft.com/dotnet/%s:%s" imgType imgVersion
-        else sprintf "mcr.microsoft.com/dotnet/core/%s:%s" imgType imgVersion
+let dotnetDockerRepo (dotnetVersion: string) imgType (imgVersion: string) =
+    if imgVersion.Contains "preview"
+        then sprintf "mcr.microsoft.com/dotnet/nightly/%s:%s" imgType imgVersion
+        else sprintf "mcr.microsoft.com/dotnet/%s:%s" imgType imgVersion
 
 let getDailyBuildInfo (dotnetVersion) =
     async {
