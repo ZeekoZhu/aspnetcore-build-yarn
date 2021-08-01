@@ -23,4 +23,4 @@ ENV ASPNETCORE_URLS=http://+:80 \
         # Set the invariant mode since icu_libs isn't included (see https://github.com/dotnet/announcements/issues/20)
         DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
 
-RUN npm install -g yarn@$YARN_VERSION
+RUN npm install -g yarn@$YARN_VERSION --force
