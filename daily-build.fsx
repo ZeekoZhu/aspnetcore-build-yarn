@@ -95,7 +95,7 @@ let getAllDailyBuildInfo () =
     for version in trackingVersions do
         Directory.ensure ("daily" </> version)
         let infoFile = "daily" </> version </> "daily-build-info.toml"
-        
+
         let info =
             getDailyBuildInfo version |> Async.RunSynchronously
         if File.exists infoFile then
@@ -138,6 +138,8 @@ let commitChanges () =
         |> Seq.isEmpty
     if not skipCommit then
         let now = DateTime.Now.ToString("O")
+        runCmd "git" ["config"; "user.name"; "ZeekoZhu"]
+        runCmd "git" ["config"; "user.email"; "vaezt@outlook.com"]
         runCmd "git" ["add"; "."]
         runCmd "git" ["commit"; "-m"; "DailyBuild: " + now]
         gitPush ()
