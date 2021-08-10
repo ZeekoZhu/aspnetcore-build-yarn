@@ -59,6 +59,6 @@ let gitPush () =
 
 let checkTemplateUpdate () =
     let changed =
-        runGitCmd "ls-files -sdm"
+        runGitCmd "ls-files -m"
     Trace.trace changed
     changed.Contains "daily-template/"
