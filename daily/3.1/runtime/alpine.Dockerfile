@@ -1,11 +1,11 @@
-FROM zeekozhu/aspnetcore-node-deps:3.1.20
+FROM zeekozhu/aspnetcore-node-deps:3.1.21
 
 # Install ASP.NET Core
-ENV ASPNETCORE_VERSION=3.1.20 \
-    DOTNET_VERSION=3.1.20
+ENV ASPNETCORE_VERSION=3.1.21 \
+    DOTNET_VERSION=3.1.21
 
 RUN wget -O dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET_VERSION/dotnet-runtime-$DOTNET_VERSION-linux-musl-x64.tar.gz \
-    && dotnet_sha512='6965afa8d5639edb293f44b8da3f42a0fec8a7c1673174da93963fab8a6bc3521a8e921e69b40a6b73c25ce25264a9be3b88205f2a7fa2c7a2ea8986f2227113' \
+    && dotnet_sha512='73e7fb6f7ddd4e6e7891fd006d18c4cfb07120dd4fd15458b01656540c77df667704d3c9068dea1177ea37fccbefd7bcec0c7d2e58660859e7ac8bc6cfff07f7' \
     && echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet \
     && tar -C /usr/share/dotnet -xzf dotnet.tar.gz \
@@ -13,7 +13,7 @@ RUN wget -O dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET
     && rm dotnet.tar.gz
 
 RUN wget -O aspnetcore.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/$ASPNETCORE_VERSION/aspnetcore-runtime-$ASPNETCORE_VERSION-linux-musl-x64.tar.gz \
-    && aspnetcore_sha512='e910816ccf840f2eed8546ed441acc968baff241522cf5c6456f38cd3344fc13eaf15d5a8daa5b4422ed63e79b8434b2a3413d7c660ecbdab437efdf88507b0c' \
+    && aspnetcore_sha512='aacef811d7d6c549671212da79f9ce85100c9a898ed33091190679ffd83cbc7e984eb582e223f03ce0f4d4300393bc9e65d29824143175ac78a9cbfdb2a46aeb' \
     && echo "$aspnetcore_sha512  aspnetcore.tar.gz" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet \
     && tar -zxf aspnetcore.tar.gz -C /usr/share/dotnet ./shared/Microsoft.AspNetCore.App \

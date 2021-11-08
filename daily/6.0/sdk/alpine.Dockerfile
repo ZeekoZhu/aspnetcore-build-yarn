@@ -1,4 +1,4 @@
-FROM zeekozhu/aspnetcore-node-deps:6.0.0-rc.2.21480.10
+FROM zeekozhu/aspnetcore-node-deps:6.0.0
 
 
 ENV \
@@ -20,10 +20,10 @@ ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     PATH="/root/.dotnet/tools:${PATH}"
 
 # Install .NET Core SDK
-ENV DOTNET_SDK_VERSION 6.0.100-rc.2.21505.57
+ENV DOTNET_SDK_VERSION 6.0.100
 
 RUN wget -O dotnet.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION/dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-x64.tar.gz \
-    && dotnet_sha512='088de76a319ccc11e2d06310d096540100a76a94933602a614fb1f2b71ecaadcb573f2db71ef61cca339ce28caab07827bdb3eb0d7cd3199b0f4b8917f0bdfc3' \
+    && dotnet_sha512='428082c31fd588b12fd34aeae965a58bf1c26b0282184ae5267a85cdadc503f667c7c00e8641892c97fbd5ef26a38a605b683b45a0fef2da302ec7f921cf64fe' \
     && echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet \
     && tar -C /usr/share/dotnet -xzf dotnet.tar.gz \
