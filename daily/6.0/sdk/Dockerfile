@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0.100
+FROM mcr.microsoft.com/dotnet/sdk:6.0.101
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80 \
@@ -19,7 +19,7 @@ RUN apt-get -qq update \
 
 # set up node
 ENV NODE_VERSION 16.13.1
-ENV YARN_VERSION 1.22.15
+ENV YARN_VERSION 1.22.17
 ENV NODE_DOWNLOAD_SHA 5f80197d654fd0b749cdeddf1f07a5eac1fcf6b423a00ffc8f2d3bea9c6dc8d1
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 

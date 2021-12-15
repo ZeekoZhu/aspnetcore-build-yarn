@@ -1,6 +1,6 @@
 FROM node:16.13.1-alpine
 
-ENV YARN_VERSION 1.22.15
+ENV YARN_VERSION 1.22.17
 
 RUN apk add libgdiplus-dev --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
         --allow-untrusted
