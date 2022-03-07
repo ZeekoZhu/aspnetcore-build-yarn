@@ -32,6 +32,6 @@ RUN wget -O dotnet.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DO
 
 # Trigger first run experience by running arbitrary cmd to populate local package cache
 RUN dotnet help \
-    && dotnet tool install -g fake-cli \
+    && dotnet tool install -g fake-cli --version 5.20.4 \
     && dotnet tool install -g paket
 WORKDIR /
