@@ -1,4 +1,4 @@
-FROM zeekozhu/aspnetcore-node-deps:5.0.13
+FROM zeekozhu/aspnetcore-node-deps:5.0.14
 
 
 ENV \
@@ -20,10 +20,10 @@ ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     PATH="/root/.dotnet/tools:${PATH}"
 
 # Install .NET Core SDK
-ENV DOTNET_SDK_VERSION 5.0.404
+ENV DOTNET_SDK_VERSION 5.0.405
 
 RUN wget -O dotnet.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION/dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-x64.tar.gz \
-    && dotnet_sha512='f165e381f9496af0368573db7f4559041c53c0a00cf6c1a9fb104ca62b4f079014c26b2d4787d206ae6594f3969a24f90d90f81c876c8b5ded4122b651d95587' \
+    && dotnet_sha512='b37393cbb6cb1cab4efe88741b29a70d9a519a21f9a0ba870a2be58e7fee30d6b9e7da57aa572df5d4f0c876dd43a1ad11517d4988b5ec26511215f6c362debd' \
     && echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
     && mkdir -p /usr/share/dotnet \
     && tar -C /usr/share/dotnet -xzf dotnet.tar.gz \
@@ -32,6 +32,6 @@ RUN wget -O dotnet.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DO
 
 # Trigger first run experience by running arbitrary cmd to populate local package cache
 RUN dotnet help \
-    && dotnet tool install -g fake-cli \
+    && dotnet tool install -g fake-cli --version 5.20.4 \
     && dotnet tool install -g paket
 WORKDIR /

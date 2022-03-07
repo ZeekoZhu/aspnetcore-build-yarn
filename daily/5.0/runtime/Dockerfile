@@ -1,12 +1,12 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0.13
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.14
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80
 
 # set up node
-ENV NODE_VERSION 16.13.2
+ENV NODE_VERSION 16.14.0
 ENV YARN_VERSION 1.22.17
-ENV NODE_DOWNLOAD_SHA a0f23911d5d9c371e95ad19e4e538d19bffc0965700f187840eb39a91b0c3fb0
+ENV NODE_DOWNLOAD_SHA 2c69e7b040c208b61ebf9735c63d2e5bcabfed32ef05a9b8dd5823489ea50d6b
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 
 RUN apt-get -qq update \
