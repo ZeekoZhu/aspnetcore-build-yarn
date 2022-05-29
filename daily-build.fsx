@@ -133,23 +133,7 @@ let buildDailyImages dotnetVersion =
     1
     "CI"
     (convertVersionedString
-      "-t zeekozhu/aspnetcore-build-yarn:alpine -f daily/%s/sdk/alpine.Dockerfile -c ./daily/%s/sdk -s ./daily/%s/daily.spec.toml"
-      dotnetVersion
-     |> convertCmd)
-
-  Target.run
-    1
-    "CI"
-    (convertVersionedString
       "-t zeekozhu/aspnetcore-node -f daily/%s/runtime/Dockerfile -c ./daily/%s/runtime -s ./daily/%s/daily.spec.toml"
-      dotnetVersion
-     |> convertCmd)
-
-  Target.run
-    1
-    "CI"
-    (convertVersionedString
-      "-t zeekozhu/aspnetcore-node:alpine -f daily/%s/runtime/alpine.Dockerfile -c ./daily/%s/runtime -s ./daily/%s/daily.spec.toml"
       dotnetVersion
      |> convertCmd)
 
