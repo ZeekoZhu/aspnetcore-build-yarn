@@ -20,6 +20,8 @@ jobs:
       - name: Install dependencies
         run: |
           curl https://get.volta.sh | bash && \
+          echo "VOLTA_HOME=~/.volta" >> $GITHUB_ENV && \
+          echo "$VOLTA_HOME/bin" >> $GITHUB_PATH && \
           dotnet tool restore
       - name: Build
         run: dotnet fake build -t daily
