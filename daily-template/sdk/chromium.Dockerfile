@@ -31,7 +31,6 @@ RUN apt-get -qq update \
 
 # Trigger first run experience by running arbitrary cmd to populate local package cache
 RUN dotnet help \
-    && dotnet tool install -g fake-cli \
     && dotnet tool install -g paket
 
 WORKDIR /

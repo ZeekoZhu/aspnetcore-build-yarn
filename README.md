@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/ZeekoZhu/aspnetcore-build-yarn.svg)](https://travis-ci.org/ZeekoZhu/aspnetcore-build-yarn)
 
+*alpine based image are removed due to https://github.com/volta-cli/volta/issues/473*
+
 ## Tags
 
 ### [aspnetcore-build-yarn](https://hub.docker.com/r/zeekozhu/aspnetcore-build-yarn/)
