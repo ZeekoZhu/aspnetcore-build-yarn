@@ -16,9 +16,11 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1.7.2
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: 6.0.x
       - name: Install dependencies
-        run: dotnet tool restore
+        run: |
+          curl https://get.volta.sh | bash && \
+          dotnet tool restore
       - name: Build
         run: dotnet fake build -t daily
         env:

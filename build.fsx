@@ -4,9 +4,6 @@
 #load "./daily-build.fsx"
 #load "./docker.fsx"
 
-#if !FAKE
-  #r "Facades/netstandard"
-#endif
 open Fake.Core
 open Fake.Core.TargetOperators
 open Fake.MyFakeTools

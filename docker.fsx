@@ -3,9 +3,6 @@ module Docker
 #load ".fake/build.fsx/intellisense.fsx"
 #load "./variables.fsx"
 #load "./versions.fsx"
-#if !FAKE
-  #r "Facades/netstandard"
-#endif
 open System.IO
 open System.Text.RegularExpressions
 open Fake.Core

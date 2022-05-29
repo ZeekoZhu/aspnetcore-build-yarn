@@ -4,9 +4,6 @@ module DailyBuild
 #load "./build-info.fsx"
 #load "./utils.fsx"
 #load "./versions.fsx"
-#if !FAKE
-  #r "Facades/netstandard"
-#endif
 open System
 open System.IO
 open Fake.Core
@@ -58,14 +55,18 @@ let dotnetDockerRepo (dotnetVersion: string) imgType (imgVersion: string) =
         then sprintf "mcr.microsoft.com/dotnet/nightly/%s:%s" imgType imgVersion
         else sprintf "mcr.microsoft.com/dotnet/%s:%s" imgType imgVersion
 
+
+
 let getDailyBuildInfo (dotnetVersion) =
     async {
-        let! (nodeVersion, nodeSha) = getNodeJsInfoAsync ()
+        let! nodeVersion = getNodeJsInfoAsyncV2()
+        let nodeVersion = failIfError nodeVersion
         let! release = DotNetRelease.getIndex dotnetVersion
         let aspnet = release.AspNetCore
         let sdk = release.Sdk
         let runtime = release.Runtime
-        let! yarnVersion = getYarnInfoAsync ()
+        let! yarnVersion = getYarnInfoAsyncV2()
+        let yarnVersion = failIfError yarnVersion
         let depsVersion = aspnet.Version
         let aspnetImage = DotNetRelease.parseImageVersion aspnet.Version
         let aspnetImage = dotnetDockerRepo dotnetVersion "aspnet" aspnetImage
@@ -74,7 +75,7 @@ let getDailyBuildInfo (dotnetVersion) =
         return
             { NodeVersion = nodeVersion
               YarnVersion = yarnVersion
-              NodeSHA = nodeSha
+              NodeSHA = ""
               DepsVersion = depsVersion
               AspNetCoreVersion = aspnet.Version
               AspNetCoreSHA = aspnet.FileHash

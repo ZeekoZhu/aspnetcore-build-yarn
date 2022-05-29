@@ -1,13 +1,12 @@
-version 5.206.0
 // [ FAKE GROUP ]
 group Build
     storage: none
-    framework: auto-detect
+    framework: net6.0
     source https://api.nuget.org/v3/index.json
     source https://www.myget.org/F/zeekoget/api/v3/index.json
     nuget Fake.DotNet.Cli
-    nuget Nett 0.10.1
-    nuget MyFakeTools 0.0.15
+    nuget Nett
+    nuget MyFakeTools
     nuget TaskBuilder.fs
     nuget FSharp.Data
-    nuget AngleSharp
+    nuget FsToolkit.ErrorHandling

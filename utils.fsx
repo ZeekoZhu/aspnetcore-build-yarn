@@ -1,9 +1,7 @@
 module Utils
 
 #load ".fake/build.fsx/intellisense.fsx"
-#if !FAKE
-  #r "Facades/netstandard"
-#endif
+
 open System
 open Fake.Core
 open Fake.Tools
@@ -62,3 +60,8 @@ let checkTemplateUpdate () =
         runGitCmd "ls-files -m"
     Trace.trace changed
     changed.Contains "daily-template/"
+
+let failIfError =
+    function
+    | Result.Ok value -> value
+    | Result.Error err -> failwith $"%A{err}"
