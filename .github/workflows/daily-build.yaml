@@ -24,7 +24,10 @@ jobs:
           echo "$VOLTA_HOME/bin" >> $GITHUB_PATH && \
           dotnet tool restore
       - name: Build
-        run: dotnet fake build -t daily
+        run: |
+          echo $PATH
+          echo $VOLTA_HOME
+          dotnet fake build -t daily
         env:
           GH_USER: ${{ secrets.GH_USER }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
