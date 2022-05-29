@@ -1,5 +1,4 @@
-FROM zeekozhu/aspnetcore-node-deps:{{DepsVersion}}
-
+FROM {{SdkImage}}-alpine3.15
 
 ENV \
     # Unset the value from the base image
@@ -19,16 +18,15 @@ ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     FAKE_DETAILED_ERRORS=true \
     PATH="/root/.dotnet/tools:${PATH}"
 
-# Install .NET Core SDK
-ENV DOTNET_SDK_VERSION {{SdkVersion}}
+# install volta
+RUN curl https://get.volta.sh | bash
 
-RUN wget -O dotnet.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION/dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-x64.tar.gz \
-    && dotnet_sha512='{{SdkSHA}}' \
-    && echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
-    && mkdir -p /usr/share/dotnet \
-    && tar -C /usr/share/dotnet -xzf dotnet.tar.gz \
-    && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
-    && rm dotnet.tar.gz
+ENV VOLTA_HOME $HOME/.volta
+ENV PATH $VOLTA_HOME/bin:$PATH
+
+RUN volta install node@latest \
+    && volta install yarn@latest \
+    && volta list -d --format plain
 
 # Trigger first run experience by running arbitrary cmd to populate local package cache
 RUN dotnet help \

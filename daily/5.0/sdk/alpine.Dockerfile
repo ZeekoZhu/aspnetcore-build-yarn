@@ -1,5 +1,4 @@
-FROM zeekozhu/aspnetcore-node-deps:5.0.17
-
+FROM mcr.microsoft.com/dotnet/sdk:5.0.408-alpine3.15
 
 ENV \
     # Unset the value from the base image
@@ -19,16 +18,15 @@ ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     FAKE_DETAILED_ERRORS=true \
     PATH="/root/.dotnet/tools:${PATH}"
 
-# Install .NET Core SDK
-ENV DOTNET_SDK_VERSION 5.0.408
+# install volta
+RUN curl https://get.volta.sh | bash
 
-RUN wget -O dotnet.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION/dotnet-sdk-$DOTNET_SDK_VERSION-linux-musl-x64.tar.gz \
-    && dotnet_sha512='40514b07e90fff4911633d807a7eab4139c3755a6e2ddf92999f011445f0cfa99014b8953cdc249d62ea2f8a3b9e93708c3a6ff598f38b106c340b0955615c52' \
-    && echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
-    && mkdir -p /usr/share/dotnet \
-    && tar -C /usr/share/dotnet -xzf dotnet.tar.gz \
-    && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
-    && rm dotnet.tar.gz
+ENV VOLTA_HOME $HOME/.volta
+ENV PATH $VOLTA_HOME/bin:$PATH
+
+RUN volta install node@latest \
+    && volta install yarn@latest \
+    && volta list -d --format plain
 
 # Trigger first run experience by running arbitrary cmd to populate local package cache
 RUN dotnet help \

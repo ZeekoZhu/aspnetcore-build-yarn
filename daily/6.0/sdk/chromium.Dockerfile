@@ -14,18 +14,15 @@ ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
     PATH="/root/.dotnet/tools:${PATH}" \
     CHROME_BIN=/usr/bin/chromium
 
-# set up node
-ENV NODE_VERSION 16.15.0
-ENV YARN_VERSION 1.22.18
-ENV NODE_DOWNLOAD_SHA d1c1de461be10bfd9c70ebae47330fb1b4ab0a98ad730823fb1340e34993edee
-ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
+# install volta
+RUN curl https://get.volta.sh | bash
 
-RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
-    && echo "$NODE_DOWNLOAD_SHA  nodejs.tar.gz" | sha256sum -c - \
-    && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
-    && rm nodejs.tar.gz \
-    && npm i -g yarn@$YARN_VERSION \
-    && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+ENV VOLTA_HOME $HOME/.volta
+ENV PATH $VOLTA_HOME/bin:$PATH
+
+RUN volta install node@latest \
+    && volta install yarn@latest \
+    && volta list -d --format plain
 
 # Install chromium
 RUN apt-get -qq update \
@@ -34,7 +31,7 @@ RUN apt-get -qq update \
 
 # Trigger first run experience by running arbitrary cmd to populate local package cache
 RUN dotnet help \
-    && dotnet tool install -g fake-cli --version 5.20.4 \
+    && dotnet tool install -g fake-cli \
     && dotnet tool install -g paket
 
 WORKDIR /

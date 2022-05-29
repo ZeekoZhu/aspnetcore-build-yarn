@@ -17,18 +17,15 @@ RUN apt-get -qq update \
     && apt-get install -y build-essential --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# set up node
-ENV NODE_VERSION {{NodeVersion}}
-ENV YARN_VERSION {{YarnVersion}}
-ENV NODE_DOWNLOAD_SHA {{NodeSHA}}
-ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
+# install volta
+RUN curl https://get.volta.sh | bash
 
-RUN wget "$NODE_DOWNLOAD_URL" -O nodejs.tar.gz \
-    && echo "$NODE_DOWNLOAD_SHA  nodejs.tar.gz" | sha256sum -c - \
-    && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
-    && rm nodejs.tar.gz \
-    && npm i -g yarn@$YARN_VERSION \
-    && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+ENV VOLTA_HOME $HOME/.volta
+ENV PATH $VOLTA_HOME/bin:$PATH
+
+RUN volta install node@latest \
+    && volta install yarn@latest \
+    && volta list -d --format plain
 
 # Trigger first run experience by running arbitrary cmd to populate local package cache
 RUN dotnet help \
