@@ -21,8 +21,8 @@ ENV DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX=2 \
 # install volta
 RUN curl https://get.volta.sh | bash
 
-ENV VOLTA_HOME $HOME/.volta
-ENV PATH $VOLTA_HOME/bin:$PATH
+ENV VOLTA_HOME=/root/.volta
+ENV PATH=$VOLTA_HOME/bin:$PATH
 
 RUN volta install node@latest \
     && volta install yarn@latest \

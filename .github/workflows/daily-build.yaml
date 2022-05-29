@@ -19,14 +19,9 @@ jobs:
           dotnet-version: 6.0.x
       - name: Install dependencies
         run: |
-          curl https://get.volta.sh | bash && \
-          echo "VOLTA_HOME=$HOME/.volta" >> $GITHUB_ENV && \
-          echo "$HOME/.volta/bin" >> $GITHUB_PATH && \
           dotnet tool restore
       - name: Build
         run: |
-          echo $PATH
-          echo $VOLTA_HOME
           dotnet fake build -t daily
         env:
           GH_USER: ${{ secrets.GH_USER }}

@@ -7,7 +7,6 @@ open Fake.Core
 open CommandLine
 open FSharp.Data
 open System.Net.Http
-open Fake.MyFakeTools
 open Microsoft.FSharp.Control
 open FsToolkit.ErrorHandling
 
@@ -69,31 +68,6 @@ type BuildInfoOptions =
   { [<Option('d', "dotnet", Required = true)>]
     DotnetVersions: string seq }
 
-let getVoltaToolVersion (tool: string) =
-  async {
-    Utils.runCmd "volta" [ "install"; $"{tool}@latest" ]
-
-    let! result =
-      CreateProcess.fromRawCommandLine "volta" "list -d --format plain"
-      |> Utils.showOutput
-      |> Proc.startAndAwait
-
-    if result.ExitCode = 0 then
-      let pattern =
-        Regex($"""{tool}@([0-9.]+)""")
-
-      let nodeVersion =
-        pattern.Matches(result.Result.Output).[0].Groups.[1]
-          .Value
-
-      return nodeVersion |> Result.Ok
-    else
-      return result.Result.Output |> Result.Error
-  }
-
-let getNodeJsInfoAsyncV2 () = getVoltaToolVersion "node"
-let getYarnInfoAsyncV2 () = getVoltaToolVersion "yarn"
-
 let getDepsInfo (options: BuildInfoOptions) =
   let dotnetInfo version =
     async {
@@ -108,28 +82,6 @@ let getDepsInfo (options: BuildInfoOptions) =
           sprintf "Runtime: %A" dotnetRelease.Runtime
         }
     }
-
-  let withName name = AsyncResult.map (fun r -> name, r)
-
-  let nodejsTask =
-    getNodeJsInfoAsyncV2 () |> withName "node"
-
-  let yarnTask =
-    getYarnInfoAsyncV2 () |> withName "yarn"
-
-  let printVersionInfo =
-    function
-    | Result.Ok (name, version) -> Trace.logfn $"{name}@{version}"
-    | Result.Error error -> Trace.traceErrorfn $"%s{error}"
-
-  Async.Parallel(
-    seq {
-      nodejsTask
-      yarnTask
-    }
-  )
-  |> Async.RunSynchronously
-  |> Seq.iter printVersionInfo
 
   for v in options.DotnetVersions do
     dotnetInfo v
