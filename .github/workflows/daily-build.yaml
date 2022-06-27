@@ -23,7 +23,7 @@ jobs:
       - name: Build
         run: |
           dotnet --info
-          export DOTNET_HOST_PATH=/usr/share/dotnet/sdk
+          export DOTNET_HOST_PATH=/home/runner/.dotnet/sdk
           dotnet fake build -t daily
         env:
           GH_USER: ${{ secrets.GH_USER }}
