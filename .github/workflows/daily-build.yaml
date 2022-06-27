@@ -19,7 +19,7 @@ jobs:
           dotnet-version: 6.0.x
       - name: Install dependencies
         run: |
-          dotnet tool --global install fake-cli
+          dotnet -g tool install fake-cli
       - name: Build
         run: |
           dotnet fake build -t daily
