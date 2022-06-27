@@ -23,6 +23,7 @@ jobs:
           dotnet tool install -g paket
       - name: Build
         run: |
+          dotnet tool restore
           dotnet fake build -t daily
         env:
           GH_USER: ${{ secrets.GH_USER }}
