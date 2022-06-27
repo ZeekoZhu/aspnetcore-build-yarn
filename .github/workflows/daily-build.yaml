@@ -19,11 +19,10 @@ jobs:
           dotnet-version: 6.0.x
       - name: Install dependencies
         run: |
-          dotnet tool install -g fake-cli
-          dotnet tool install -g paket
+          dotnet tool restore
       - name: Build
         run: |
-          dotnet tool restore
+          export DOTNET_HOST_PATH=/usr/share/dotnet/sdk
           dotnet fake build -t daily
         env:
           GH_USER: ${{ secrets.GH_USER }}
