@@ -22,6 +22,7 @@ jobs:
           dotnet tool restore
       - name: Build
         run: |
+          dotnet --info
           export DOTNET_HOST_PATH=/usr/share/dotnet/sdk
           dotnet fake build -t daily
         env:
