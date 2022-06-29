@@ -1,4 +1,4 @@
-module Variables
+module CLI.Variables
 
 let BuildParams = "BuildParams"
 

@@ -1,0 +1,154 @@
+module CLI.Docker
+
+open System
+open System.IO
+open System.Text.RegularExpressions
+open System.Threading.Tasks
+open Microsoft.Extensions.Logging
+open Microsoft.Extensions.DependencyInjection
+open Nett
+open Semver
+open SimpleExec
+
+type BuildOptions =
+  { Tag: string
+    Dockerfile: FileInfo
+    ContextPath: DirectoryInfo
+    Spec: string }
+
+module Exec =
+  let run p (args: string seq) = Command.Run(p, args)
+
+  let readAsync p (args: string seq) =
+    async {
+      let! out, _ = Command.ReadAsync(p, args) |> Async.AwaitTask
+      return out
+    }
+
+
+let build (options: BuildOptions) =
+  Exec.run
+    "docker"
+    [ "build"
+      "-t"
+      options.Tag
+      "-f"
+      options.Dockerfile.FullName
+      options.ContextPath.FullName ]
+
+
+
+[<CLIMutable>]
+type ImageSpecItem =
+  { Name: string
+    TestImage: string
+    Dotnet: string
+    Node: string
+    Yarn: string
+    Sdk: bool
+    Suffix: string
+    Latest: bool
+    SkipTest: bool
+    Tag: string }
+
+[<CLIMutable>]
+type ImageSpec = { Images: ImageSpecItem [] }
+
+let getBuildParams (specFile: string) (name: string) =
+  let spec =
+    Toml.ReadFile<ImageSpec>(specFile)
+
+  spec.Images |> Seq.find (fun x -> x.Name = name)
+
+let testImage (services: IServiceProvider) (imageSpec: ImageSpecItem) =
+  let logger = services.GetService<ILogger>()
+
+  if imageSpec.SkipTest then
+    ()
+  else
+    let dockerRunRm args =
+      Exec.readAsync "docker" ([ "run"; "--rm"; imageSpec.TestImage ] @ args)
+
+    let acceptList =
+      [ "dotnet", "5.0.100-preview.7.20366.6", "5.0.100-preview.7.20366.15" ]
+
+    let inAcceptList versions = acceptList |> List.contains versions
+
+    let checkVersion item itemValue (actualValue: string) =
+      logger.info $"Q: Is %s{item}'s version %s{itemValue} ?"
+
+      if itemValue.Trim() <> actualValue.Trim()
+         && not
+            <| inAcceptList (item, itemValue.Trim(), actualValue.Trim()) then
+        logger.info $"A: No, %s{item}'s version is %s{actualValue}!"
+        failwithf $"Test %s{item} failed"
+      else
+        logger.info "A: Yes!"
+
+    let dotnetVersion =
+      async {
+        if imageSpec.Sdk then
+          return! dockerRunRm [ "dotnet"; "--version" ]
+        else
+          let reg =
+            Regex("^  Microsoft.AspNetCore.App (?<runtime>.*) \\[.*\\]$", RegexOptions.Multiline)
+
+          let! result = dockerRunRm [ "dotnet"; "--info" ]
+
+          return (reg.Match(result).Groups.Item "runtime").Value
+      }
+
+    [| dockerRunRm [ "node"; "--version" ]
+       dockerRunRm [ "yarn"; "--version" ]
+       dockerRunRm [ "volta"; "--version" ] |]
+    |> Async.Parallel
+    |> Async.RunSynchronously
+    |> ignore
+
+    let dotnetVersion = dotnetVersion |> Async.RunSynchronously
+    [ ("dotnet", dotnetVersion, imageSpec.Dotnet) ]
+    |> List.iter (fun (item, actual, expected) -> checkVersion item expected actual)
+
+let publishImage (services: IServiceProvider) (spec: ImageSpecItem) =
+  let logger = services.GetService<ILogger>()
+  let versionConfig = Versions.readVersions ()
+  let latestVersion = versionConfig.Latest
+
+  let version =
+    SemVersion.Parse(spec.Dotnet, SemVersionStyles.Any)
+
+  let major = string version.Major
+
+  let minor =
+    major + "." + string version.Minor
+
+  let patch = version.ToString()
+
+  seq {
+    yield minor
+    yield patch
+
+    if spec.Latest && minor = latestVersion then
+      yield "latest"
+  }
+  |> Seq.map (fun t ->
+    let tag = spec.Tag + ":" + t
+
+    if String.IsNullOrEmpty spec.Suffix then
+      tag
+    else
+      tag + "-" + spec.Suffix)
+  |> Seq.iter (fun t ->
+    logger.info $"Pushing %s{t}"
+    Exec.run "docker" [ "tag"; spec.TestImage; t ]
+    Exec.run "docker" [ "push"; t ])
+
+let ciBuild (p: BuildOptions) =
+  let buildParams =
+    getBuildParams p.Spec p.Tag
+
+  let buildOptions =
+    { p with Tag = buildParams.TestImage }
+
+  build buildOptions
+// todo:  FakeVar.set BuildParams buildParams

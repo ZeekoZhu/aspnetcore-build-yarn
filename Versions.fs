@@ -1,11 +1,9 @@
-module Versions
+module CLI.Versions
 
-#load ".fake/build.fsx/intellisense.fsx"
-#load "./variables.fsx"
 
 open Nett
-open Fake.IO.FileSystemOperators
 open Fake.IO
+open Fake.IO.FileSystemOperators
 
 [<CLIMutable>]
 type VersionsConfig =

@@ -1,0 +1,8 @@
+System.CommandLine
+Nett
+Microsoft.Extensions.Logging.Console
+FSharp.Core
+SimpleExec
+Microsoft.Extensions.DependencyInjection
+Semver
+Fake.IO.FileSystem

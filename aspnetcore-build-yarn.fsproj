@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>aspnetcore_build_yarn</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Logging.fs" />
+    <None Include="build-info.fsx" />
+    <None Include="daily-build.fsx" />
+    <Compile Include="Variables.fs" />
+    <Compile Include="Versions.fs" />
+    <Compile Include="docker.fs" />
+    <None Include="utils.fsx" />
+    <Compile Include="CI.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <Import Project=".paket\Paket.Restore.targets" />
+</Project>

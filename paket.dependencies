@@ -1,12 +1,14 @@
-// [ FAKE GROUP ]
-group Build
-    storage: none
-    framework: net6.0
-    source https://api.nuget.org/v3/index.json
-    source https://www.myget.org/F/zeekoget/api/v3/index.json
-    nuget Fake.DotNet.Cli
-    nuget Nett
-    nuget MyFakeTools
-    nuget TaskBuilder.fs
-    nuget FSharp.Data
-    nuget FsToolkit.ErrorHandling
+storage: none
+framework: net6.0
+source https://api.nuget.org/v3/index.json
+source https://www.myget.org/F/zeekoget/api/v3/index.json
+nuget Fake.DotNet.Cli
+nuget Nett
+nuget MyFakeTools
+nuget TaskBuilder.fs
+nuget FSharp.Data
+nuget FsToolkit.ErrorHandling
+nuget System.CommandLine 2.0.0-beta4.22272.1 beta4
+nuget Microsoft.Extensions.Logging.Console
+nuget SimpleExec
+nuget Semver
