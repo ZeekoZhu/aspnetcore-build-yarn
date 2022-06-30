@@ -3,7 +3,6 @@ module CLI.Docker
 open System
 open System.IO
 open System.Text.RegularExpressions
-open System.Threading.Tasks
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Nett
@@ -60,54 +59,56 @@ let getBuildParams (specFile: string) (name: string) =
 
   spec.Images |> Seq.find (fun x -> x.Name = name)
 
+let acceptList =
+  [ "dotnet", "5.0.100-preview.7.20366.6", "5.0.100-preview.7.20366.15" ]
+
+let inAcceptList versions = acceptList |> List.contains versions
+
+let checkVersion (logger: ILogger) (item, itemValue, actualValue: string) =
+  $"Q: Is %s{item}'s version %s{itemValue} ?"
+  |> logger.info
+
+  if itemValue.Trim() <> actualValue.Trim()
+     && not
+        <| inAcceptList (item, itemValue.Trim(), actualValue.Trim()) then
+    logger.LogInformation $"A: No, %s{item}'s version is %s{actualValue}!"
+    failwithf $"Test %s{item} failed"
+  else
+    logger.LogInformation "A: Yes!"
+
+let dockerRunRm image args =
+  Exec.readAsync "docker" ([ "run"; "--rm"; image ] @ args)
+
+let dotnetVersion (imageSpec: ImageSpecItem) =
+  async {
+    if imageSpec.Sdk then
+      return! dockerRunRm imageSpec.TestImage [ "dotnet"; "--version" ]
+    else
+      let reg =
+        Regex("^  Microsoft.AspNetCore.App (?<runtime>.*) \\[.*\\]$", RegexOptions.Multiline)
+
+      let! result = dockerRunRm imageSpec.TestImage [ "dotnet"; "--info" ]
+      return (reg.Match(result).Groups.Item "runtime").Value
+  }
+
 let testImage (services: IServiceProvider) (imageSpec: ImageSpecItem) =
   let logger = services.GetService<ILogger>()
 
   if imageSpec.SkipTest then
     ()
   else
-    let dockerRunRm args =
-      Exec.readAsync "docker" ([ "run"; "--rm"; imageSpec.TestImage ] @ args)
-
-    let acceptList =
-      [ "dotnet", "5.0.100-preview.7.20366.6", "5.0.100-preview.7.20366.15" ]
-
-    let inAcceptList versions = acceptList |> List.contains versions
-
-    let checkVersion item itemValue (actualValue: string) =
-      logger.info $"Q: Is %s{item}'s version %s{itemValue} ?"
-
-      if itemValue.Trim() <> actualValue.Trim()
-         && not
-            <| inAcceptList (item, itemValue.Trim(), actualValue.Trim()) then
-        logger.info $"A: No, %s{item}'s version is %s{actualValue}!"
-        failwithf $"Test %s{item} failed"
-      else
-        logger.info "A: Yes!"
-
-    let dotnetVersion =
-      async {
-        if imageSpec.Sdk then
-          return! dockerRunRm [ "dotnet"; "--version" ]
-        else
-          let reg =
-            Regex("^  Microsoft.AspNetCore.App (?<runtime>.*) \\[.*\\]$", RegexOptions.Multiline)
-
-          let! result = dockerRunRm [ "dotnet"; "--info" ]
-
-          return (reg.Match(result).Groups.Item "runtime").Value
-      }
-
-    [| dockerRunRm [ "node"; "--version" ]
-       dockerRunRm [ "yarn"; "--version" ]
-       dockerRunRm [ "volta"; "--version" ] |]
+    [| dockerRunRm imageSpec.TestImage [ "node"; "--version" ]
+       dockerRunRm imageSpec.TestImage [ "yarn"; "--version" ]
+       dockerRunRm imageSpec.TestImage [ "volta"; "--version" ] |]
     |> Async.Parallel
     |> Async.RunSynchronously
     |> ignore
 
-    let dotnetVersion = dotnetVersion |> Async.RunSynchronously
+    let dotnetVersion =
+      dotnetVersion imageSpec |> Async.RunSynchronously
+
     [ ("dotnet", dotnetVersion, imageSpec.Dotnet) ]
-    |> List.iter (fun (item, actual, expected) -> checkVersion item expected actual)
+    |> List.iter (checkVersion logger)
 
 let publishImage (services: IServiceProvider) (spec: ImageSpecItem) =
   let logger = services.GetService<ILogger>()
@@ -143,7 +144,7 @@ let publishImage (services: IServiceProvider) (spec: ImageSpecItem) =
     Exec.run "docker" [ "tag"; spec.TestImage; t ]
     Exec.run "docker" [ "push"; t ])
 
-let ciBuild (p: BuildOptions) =
+let ciBuild (services: IServiceProvider) (p: BuildOptions) =
   let buildParams =
     getBuildParams p.Spec p.Tag
 
@@ -151,4 +152,6 @@ let ciBuild (p: BuildOptions) =
     { p with Tag = buildParams.TestImage }
 
   build buildOptions
+  testImage services buildParams
+  publishImage services buildParams
 // todo:  FakeVar.set BuildParams buildParams
