@@ -154,4 +154,3 @@ let ciBuild (services: IServiceProvider) (p: BuildOptions) =
   build buildOptions
   testImage services buildParams
   publishImage services buildParams
-// todo:  FakeVar.set BuildParams buildParams
