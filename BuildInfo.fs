@@ -2,11 +2,8 @@ module CLI.BuildInfo
 
 open System
 open System.Text.RegularExpressions
-open CLI
-open Microsoft.Extensions.DependencyInjection
 open FSharp.Data
 open System.Net.Http
-open Microsoft.Extensions.Logging
 open Microsoft.FSharp.Control
 open FsToolkit.ErrorHandling
 

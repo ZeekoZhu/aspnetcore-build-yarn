@@ -3,8 +3,6 @@ module CLI.Docker
 open System
 open System.IO
 open System.Text.RegularExpressions
-open Microsoft.Extensions.Logging
-open Microsoft.Extensions.DependencyInjection
 open Nett
 open Semver
 open CLI
@@ -54,17 +52,17 @@ let acceptList =
 
 let inAcceptList versions = acceptList |> List.contains versions
 
-let checkVersion (logger: ILogger) (item, itemValue, actualValue: string) =
+let checkVersion (item, itemValue, actualValue: string) =
   $"Q: Is %s{item}'s version %s{itemValue} ?"
-  |> logger.info
+  |> printfn "%s"
 
   if itemValue.Trim() <> actualValue.Trim()
      && not
         <| inAcceptList (item, itemValue.Trim(), actualValue.Trim()) then
-    logger.LogInformation $"A: No, %s{item}'s version is %s{actualValue}!"
+    printfn $"A: No, %s{item}'s version is %s{actualValue}!"
     failwithf $"Test %s{item} failed"
   else
-    logger.LogInformation "A: Yes!"
+    printfn "A: Yes!"
 
 let dockerRunRm image args =
   Exec.readAsync "docker" ([ "run"; "--rm"; image ] @ args)
@@ -75,15 +73,16 @@ let dotnetVersion (imageSpec: ImageSpecItem) =
       return! dockerRunRm imageSpec.TestImage [ "dotnet"; "--version" ]
     else
       let reg =
-        Regex("^  Microsoft.AspNetCore.App (?<runtime>.*) \\[.*\\]$", RegexOptions.Multiline)
+        Regex(
+          "^  Microsoft.AspNetCore.App (?<runtime>.*) \\[.*\\]$",
+          RegexOptions.Multiline
+        )
 
       let! result = dockerRunRm imageSpec.TestImage [ "dotnet"; "--info" ]
       return (reg.Match(result).Groups.Item "runtime").Value
   }
 
 let testImage (services: IServiceProvider) (imageSpec: ImageSpecItem) =
-  let logger = services.GetService<ILogger>()
-
   if imageSpec.SkipTest then
     ()
   else
@@ -98,10 +97,9 @@ let testImage (services: IServiceProvider) (imageSpec: ImageSpecItem) =
       dotnetVersion imageSpec |> Async.RunSynchronously
 
     [ ("dotnet", dotnetVersion, imageSpec.Dotnet) ]
-    |> List.iter (checkVersion logger)
+    |> List.iter checkVersion
 
 let publishImage (services: IServiceProvider) (spec: ImageSpecItem) =
-  let logger = services.GetService<ILogger>()
   let versionConfig = Versions.readVersions ()
   let latestVersion = versionConfig.Latest
 
@@ -130,7 +128,7 @@ let publishImage (services: IServiceProvider) (spec: ImageSpecItem) =
     else
       tag + "-" + spec.Suffix)
   |> Seq.iter (fun t ->
-    logger.info $"Pushing %s{t}"
+    printfn $"Pushing %s{t}"
     Exec.run "docker" [ "tag"; spec.TestImage; t ]
     Exec.run "docker" [ "push"; t ])
 
