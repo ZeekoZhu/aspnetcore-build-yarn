@@ -1,12 +1,12 @@
-module BuildInfo
+module CLI.BuildInfo
 
-#load ".fake/build.fsx/intellisense.fsx"
-
+open System
 open System.Text.RegularExpressions
-open Fake.Core
-open CommandLine
+open CLI
+open Microsoft.Extensions.DependencyInjection
 open FSharp.Data
 open System.Net.Http
+open Microsoft.Extensions.Logging
 open Microsoft.FSharp.Control
 open FsToolkit.ErrorHandling
 
@@ -20,7 +20,8 @@ module DotNetRelease =
       Runtime: DotNetVersionInfo
       AspNetCore: DotNetVersionInfo }
 
-  type ReleaseChannelIndex = JsonProvider<Sample="./sample-release.json", InferTypesFromValues=false>
+  type ReleaseChannelIndex =
+    JsonProvider<Sample="./sample-release.json", InferTypesFromValues=false>
 
   let parseImageVersion str =
     let regex =
@@ -32,7 +33,9 @@ module DotNetRelease =
     async {
       let! releaseInfo =
         ReleaseChannelIndex.AsyncLoad(
-          sprintf "https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/%s/releases.json" version
+          sprintf
+            "https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/%s/releases.json"
+            version
         )
 
       let latestRelease =
@@ -64,26 +67,27 @@ module DotNetRelease =
     }
 
 [<NoComparison>]
-type BuildInfoOptions =
-  { [<Option('d', "dotnet", Required = true)>]
-    DotnetVersions: string seq }
+type BuildInfoOptions = { DotnetVersions: string seq }
 
-let getDepsInfo (options: BuildInfoOptions) =
+let getDepsInfo (services: IServiceProvider) (options: BuildInfoOptions) =
   let dotnetInfo version =
     async {
       let! dotnetRelease = DotNetRelease.getIndex version
 
       return
         seq {
-          sprintf "DotNet SDK: %A" dotnetRelease.Sdk
-          sprintf "AspNetCore Runtime: %A" dotnetRelease.AspNetCore
-          sprintf "SDK Image: %A" (DotNetRelease.parseImageVersion dotnetRelease.Sdk.Version)
-          sprintf "AspNetCore Runtime Image: %A" (DotNetRelease.parseImageVersion dotnetRelease.AspNetCore.Version)
-          sprintf "Runtime: %A" dotnetRelease.Runtime
+          $"DotNet SDK: %A{dotnetRelease.Sdk}"
+          $"AspNetCore Runtime: %A{dotnetRelease.AspNetCore}"
+
+          $"SDK Image: %A{DotNetRelease.parseImageVersion dotnetRelease.Sdk.Version}"
+
+          $"AspNetCore Runtime Image: %A{DotNetRelease.parseImageVersion dotnetRelease.AspNetCore.Version}"
+
+          $"Runtime: %A{dotnetRelease.Runtime}"
         }
     }
 
   for v in options.DotnetVersions do
     dotnetInfo v
     |> Async.RunSynchronously
-    |> Seq.iter (Trace.logfn "%s")
+    |> Seq.iter (printfn "%s" )

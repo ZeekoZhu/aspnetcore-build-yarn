@@ -6,3 +6,5 @@ SimpleExec
 Microsoft.Extensions.DependencyInjection
 Semver
 Fake.IO.FileSystem
+Fsharp.Data
+FsToolkit.ErrorHandling

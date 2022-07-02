@@ -61,6 +61,9 @@ module Build =
 
   let command = Command("build")
 
+  let services =
+    ServiceProviderBinder.registerServices ignore
+
   command.Add tagOpt
   command.Add dockerfileOpt
   command.Add ctxPathOpt
@@ -72,7 +75,7 @@ module Build =
   command.SetHandler<BuildOptions, IServiceProvider>(
     handler,
     BuildOptionBinder(),
-    ServiceProviderBinder()
+    services
   )
 
 command.AddCommand Build.command
