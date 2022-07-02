@@ -3,7 +3,6 @@ module CLI.Versions
 
 open Nett
 open Fake.IO
-open Fake.IO.FileSystemOperators
 
 [<CLIMutable>]
 type VersionsConfig =
@@ -12,5 +11,5 @@ type VersionsConfig =
     }
 
 let readVersions () =
-    File.readAsString (Variables.ScriptRoot </> "./versions.toml")
+    File.readAsString "./versions.toml"
     |> Toml.ReadString<VersionsConfig> 

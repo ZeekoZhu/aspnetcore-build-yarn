@@ -7,23 +7,13 @@ open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Nett
 open Semver
-open SimpleExec
+open CLI
 
 type BuildOptions =
   { Tag: string
     Dockerfile: FileInfo
     ContextPath: DirectoryInfo
     Spec: string }
-
-module Exec =
-  let run p (args: string seq) = Command.Run(p, args)
-
-  let readAsync p (args: string seq) =
-    async {
-      let! out, _ = Command.ReadAsync(p, args) |> Async.AwaitTask
-      return out
-    }
-
 
 let build (options: BuildOptions) =
   Exec.run

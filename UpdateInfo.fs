@@ -2,8 +2,6 @@ module CLI.UpdateInfo
 
 open System
 open System.CommandLine
-open Microsoft.Extensions.Logging
-open Microsoft.Extensions.DependencyInjection
 
 let command = Command("update-info")
 

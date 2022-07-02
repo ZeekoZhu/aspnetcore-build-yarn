@@ -5,7 +5,7 @@ let rootCmd = RootCommand()
 
 rootCmd.AddCommand CI.command
 rootCmd.AddCommand UpdateInfo.command
-// todo: update info command
+rootCmd.AddCommand Daily.command
 // todo: daily command
 
 let [<EntryPoint>] main args =
