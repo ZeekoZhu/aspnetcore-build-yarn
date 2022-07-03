@@ -3,18 +3,25 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>aspnetcore_build_yarn</RootNamespace>
+    <RootNamespace>CLI</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Exec.fs" />
+    <Compile Include="ServiceProviderBinder.fs" />
     <Compile Include="Logging.fs" />
-    <None Include="build-info.fsx" />
-    <None Include="daily-build.fsx" />
+    <Compile Include="BuildInfo.fs" />
+    <Compile Include="UpdateInfo.fs" />
     <Compile Include="Variables.fs" />
     <Compile Include="Versions.fs" />
     <Compile Include="docker.fs" />
-    <None Include="utils.fsx" />
     <Compile Include="CI.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="DailyBuild.fs" />
+    <Compile Include="Daily.fs" />
     <Compile Include="Program.fs" />
+    <Content Include="sample-release.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project=".paket\Paket.Restore.targets" />
 </Project>

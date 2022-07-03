@@ -22,9 +22,8 @@ jobs:
           dotnet tool restore
       - name: Build
         run: |
-          dotnet --info
-          export DOTNET_HOST_PATH=/home/runner/.dotnet/sdk
-          dotnet fake build -t daily
+          dotnet paket restore
+          dotnet run -- daily
         env:
           GH_USER: ${{ secrets.GH_USER }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
