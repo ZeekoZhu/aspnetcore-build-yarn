@@ -1,0 +1,6 @@
+AspNetCoreVersion = "7.0.3"
+AspNetImage = "mcr.microsoft.com/dotnet/aspnet:7.0.3"
+SdkVersion = "7.0.201"
+SdkImage = "mcr.microsoft.com/dotnet/sdk:7.0.201"
+RuntimeVersion = "7.0.3"
+FetchTime = "2023-03-13T04:30:15.9513298+00:00"
