@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/nightly/sdk:8.0.100-preview.2
+FROM mcr.microsoft.com/dotnet/nightly/sdk:8.0.100-preview.3
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80 \
