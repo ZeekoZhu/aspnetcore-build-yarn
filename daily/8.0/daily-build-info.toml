@@ -1,6 +1,6 @@
 AspNetCoreVersion = "8.0.0-rc.1.23421.29"
 AspNetImage = "mcr.microsoft.com/dotnet/aspnet:8.0.0-rc.1"
-SdkVersion = "8.0.100-rc.1.23455.8"
+SdkVersion = "8.0.100-rc.1.23463.5"
 SdkImage = "mcr.microsoft.com/dotnet/sdk:8.0.100-rc.1"
 RuntimeVersion = "8.0.0-rc.1.23419.4"
-FetchTime = "2023-09-13T17:04:08.1249579+00:00"
+FetchTime = "2023-09-16T17:03:14.8109986+00:00"
