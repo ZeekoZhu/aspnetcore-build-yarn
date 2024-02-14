@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0.418
+FROM mcr.microsoft.com/dotnet/sdk:6.0.419
 
 # set up environment
 ENV ASPNETCORE_URLS http://+:80 \
